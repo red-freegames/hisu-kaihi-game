@@ -388,7 +388,6 @@ body.hell .opt .k{background:var(--red)}
 .hellban{display:none;background:var(--red);color:#fff;text-align:center;font-weight:900;padding:8px;border-radius:12px;margin-bottom:10px;font-size:14px}
 .hellban.on{display:block}
 /* result */
-#result{cursor:pointer}
 .boom{border-radius:18px;padding:14px;text-align:center;color:#fff;background:var(--red);border:3px solid #2a1a14;margin-bottom:10px}
 .boom.clear{background:var(--ok)}
 .boom.ng{background:#000;border-color:var(--red);box-shadow:0 0 0 4px var(--red) inset}
@@ -463,6 +462,32 @@ body.hell .zk li.new{background:#5a3a00}
 .ach li.got{opacity:1}
 .ach li i{font-style:normal;font-size:18px;width:24px;text-align:center;flex:none}
 .ach li span small{display:block;color:var(--sub);font-size:10.5px}
+/* 隠しEXステージ：赤黒い背景・警告ランプ・脈打つ枠 */
+body.hell{background:radial-gradient(ellipse at 50% 30%,#3a0a0e 0%,#1a0508 55%,#0a0002 100%) fixed}
+.lamp{display:none;height:8px;border-radius:4px;margin-bottom:8px;background:repeating-linear-gradient(90deg,#ff1a1a 0 22px,#2a0004 22px 44px);box-shadow:0 0 12px #ff1a1a;animation:lamp .9s steps(2) infinite}
+body.hell .lamp{display:block}
+@keyframes lamp{50%{background-position:22px 0;opacity:.55}}
+body.hell .hellban{background:#000;border:2px solid #ff1a1a;color:#ffde00;animation:pulse 1.4s ease-in-out infinite}
+body.hell #game .face{border-color:#ff1a1a;animation:pulse 1.4s ease-in-out infinite}
+body.hell #game .bubble,body.hell .opt{border-color:#ff1a1a}
+body.hell .opt{box-shadow:0 4px 0 #7a0000}
+@keyframes pulse{50%{box-shadow:0 0 18px 4px rgba(255,26,26,.6)}}
+/* 結果画面：EX挑戦ボタン・伝説 */
+#result.tapretry{cursor:pointer}
+#result{cursor:auto}
+.big.ex{background:#1a0508;color:#ffde00;border-color:#ff1a1a;box-shadow:0 4px 0 #7a0000;animation:pulse 1.4s ease-in-out infinite}
+.big.gold{background:linear-gradient(#ffe680,#f5a623);color:#2a1a14}
+.boom.legend{background:linear-gradient(135deg,#fff3b0 0%,#f5c400 45%,#e08e00 100%);color:#2a1a14;border-color:#7a4a00;box-shadow:0 0 0 4px #fff6c8 inset,0 0 24px rgba(245,166,35,.7)}
+.boom.legend h2{font-size:30px;margin-top:8px}
+.boom.legend .prob{background:rgba(255,255,255,.55);color:#4a2c00}
+.goldbadge{display:inline-block;background:linear-gradient(#fffbe0,#ffd93b 50%,#c98a00);color:#4a2c00;border:3px solid #7a4a00;border-radius:99px;padding:6px 18px;font-weight:900;font-size:19px;box-shadow:0 0 0 4px #fff6c8,0 6px 18px rgba(201,138,0,.6);animation:shine 1.6s ease-in-out infinite}
+@keyframes shine{50%{transform:scale(1.06);box-shadow:0 0 0 4px #fff6c8,0 0 28px rgba(255,217,59,.95)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.confetti i{position:absolute;top:-48px;font-style:normal;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(115vh) rotate(600deg)}}
+.goldflash{animation:gf 1s}
+@keyframes gf{0%{background:#fff7c2}30%{background:#ffd93b}100%{background:var(--bg)}}
+@media (prefers-reduced-motion:reduce){.lamp,body.hell .hellban,body.hell #game .face,.big.ex,.goldbadge{animation:none}.confetti{display:none}}
 .flash{animation:fl .35s}
 .opts.locked .opt{pointer-events:none;opacity:.4;box-shadow:0 4px 0 #2a1a14}
 .opts.locked .opt.picked{opacity:1;background:#ffde00;color:#2a1a14;transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
@@ -490,9 +515,10 @@ body.hell .zk li.new{background:#5a3a00}
 
   <!-- ===== ゲーム ===== -->
   <section id="game" class="screen">
+    <div class="lamp" aria-hidden="true"></div>
     <div class="hud"><button class="home" id="gameHome">🏠 HOME</button><span class="stage" id="stage"></span><span class="qn" id="qn"></span></div>
     <div class="prog"><i id="bar"></i></div>
-    <div class="hellban" id="hellban">⚠ 限界突破 ⚠ 隠しステージ「無限地獄編」突入！相手の機嫌がさらに不安定に……</div>
+    <div class="hellban" id="hellban"></div>
     <div class="scene">
       <div class="face" id="face"></div>
       <div class="bubble" id="prompt"></div>
@@ -506,12 +532,13 @@ body.hell .zk li.new{background:#5a3a00}
   <section id="result" class="screen">
     <div class="hud"><button class="home" data-act="title">🏠 HOME</button></div>
     <div class="boom" id="boom"></div>
-    <p class="hint">▶ 画面タップ / Enter で即リトライ</p>
+    <p class="hint" id="retryHint">▶ 画面タップ / Enter で即リトライ</p>
     <div class="rec"><div><small>今回の記録</small><b id="recNow"></b></div><div><small>自己ベスト</small><b id="recBest"></b></div></div>
     <div class="cause" id="cause"></div>
     <div class="btns">
+      <button class="big ex" data-act="ex" id="exBtn">🔥 隠しEXステージ（8〜10問）に挑む</button>
       <button class="big retry" data-act="retry">⚡ 即リトライ（1問目から）</button>
-      <button class="big x" data-act="share">𝕏 記録をポストする</button>
+      <button class="big x" data-act="share" id="shareBtn">𝕏 記録をポストする</button>
       <div class="row2"><button class="big sub" data-act="title">🏠 HOME</button><button class="big sub" data-act="next" id="nextBtn">次の難易度へ</button></div>
     </div>
     <details class="zukan" id="zukanBox"><summary id="zkSum"></summary><ul class="zk" id="zkList"></ul></details>
@@ -563,7 +590,9 @@ const CONFIG = {
   TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
   REACT_MS: 550,                              // 生存時、許しのセリフを見せる長さ
   BOOM_MS: 380,                               // 死亡時、キレ顔＋爆発を見せてからリザルトへ
-  ENDLESS_RATES: [70, 65, 60],                // 隠しステージで正解(HARD 75%)の生存率が1問ごとに下がる値（最後の値で下げ止まり）
+  EX_GOAL: 10,                                // 隠しEXステージの最終問（HARDの goal+1 〜 この問まで）
+  EX_RATES: [70, 65, 60],                     // EXの各問で正解を選んだ時の生存率（8問目→9問目→10問目）。全問正解で約3.6%
+  EX_LINES: ["⚠ ここからは真の理不尽……正解でもキレられる確率が跳ね上がる", "⚠ 生存率数%の極限地帯。息をするのも慎重に", "⚠ 最終問題。伝説まで、あと1問"],
 };
 const MODES = {
   EASY:   { char: "クレーマー", goal: 5, rates: { MAIN: 100, 40: 0,  10: 0,  0: 0 }, label: "EASY",   cls: "e", title: "激怒するクレーマー客", hint: "運要素なし。誠意ある対応を選べば必ず回避できる" },
@@ -599,7 +628,7 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { c
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 // プレイデータ（ローカル保存）
-const loadStats = () => Object.assign({ plays: 0, survived: 0, deaths: 0, mainDeaths: 0, ngDeaths: 0, escapeDeaths: 0, clears: {} }, load(LS.stats, {}));
+const loadStats = () => Object.assign({ plays: 0, survived: 0, deaths: 0, mainDeaths: 0, ngDeaths: 0, escapeDeaths: 0, exTries: 0, legend: 0, clears: {} }, load(LS.stats, {}));
 const bumpStats = fn => { const s = loadStats(); fn(s); save(LS.stats, s); };
 
 /* ===== 表情イラスト（静止画切り替えのみ）=====
@@ -622,9 +651,17 @@ const FACE = {
     mouth: '<path d="M44 82 Q60 70 76 82 L72 94 Q60 88 48 94 Z" fill="#7a0d0d" stroke="#2a1a14" stroke-width="3"/><path d="M48 82 L72 82" stroke="#fff" stroke-width="4"/>',
     fx: '<text x="84" y="34" font-size="26">💢</text><path d="M10 30 l8 6 M14 20 l6 9 M106 64 l8 -4" stroke="#e8262b" stroke-width="4" stroke-linecap="round"/>' },
 };
-function faceSVG(ch, mood) {
-  const f = FACE[mood === true ? "angry" : mood || "normal"];
-  const skin = f.skin, eyes = f.eyes, mouth = f.mouth, vein = f.fx;
+// demon=true で隠しEXステージ用の「悪魔化・般若顔」（赤黒い肌・角・光る目・牙・稲妻）
+function faceSVG(ch, mood, demon) {
+  const key = mood === true ? "angry" : mood || "normal";
+  const f = FACE[key];
+  let skin = f.skin, eyes = f.eyes, mouth = f.mouth, vein = f.fx;
+  if (demon) {
+    skin = key === "angry" ? "#6e0a0a" : "#a3241f";
+    eyes = FACE.angry.eyes + '<circle cx="45" cy="63" r="5" fill="#ffde00" opacity=".9"/><circle cx="75" cy="63" r="5" fill="#ffde00" opacity=".9"/>';
+    mouth = FACE.angry.mouth + '<path d="M49 82 L53 91 L57 82 M63 82 L67 91 L71 82" fill="#fff" stroke="#2a1a14" stroke-width="1"/>';
+    vein = (key === "silent" ? FACE.silent.fx : "") + '<text x="2" y="30" font-size="22">⚡</text><text x="86" y="34" font-size="24">👿</text>';
+  }
   let back = "", front = "";
   if (ch === "クレーマー") {
     back = '<rect x="38" y="104" width="44" height="20" fill="#3a4a7a"/><path d="M56 104 L64 104 L66 120 L60 124 L54 120Z" fill="#e8262b"/>';
@@ -636,7 +673,8 @@ function faceSVG(ch, mood) {
     back = '<circle cx="60" cy="14" r="13" fill="#5a3a2e"/>';
     front = '<path d="M24 52 Q22 22 60 22 Q98 22 96 52 Q88 36 60 34 Q32 36 24 52Z" fill="#5a3a2e"/><g fill="none" stroke="#2a1a14" stroke-width="3"><circle cx="45" cy="62" r="10"/><circle cx="75" cy="62" r="10"/><path d="M55 62 L65 62"/></g><path d="M40 104 Q60 114 80 104 L84 124 L36 124Z" fill="#f4a3b5"/>';
   }
-  return `<svg viewBox="0 0 120 124" xmlns="http://www.w3.org/2000/svg">${back}<ellipse cx="60" cy="62" rx="38" ry="42" fill="${skin}" stroke="#2a1a14" stroke-width="3"/>${eyes}${mouth}${front}${vein}</svg>`;
+  const horns = demon ? '<path d="M32 34 Q20 18 24 2 Q36 16 46 26Z M88 34 Q100 18 96 2 Q84 16 74 26Z" fill="#f3e6c8" stroke="#2a1a14" stroke-width="2.5"/>' : "";
+  return `<svg viewBox="0 0 120 124" xmlns="http://www.w3.org/2000/svg">${back}<ellipse cx="60" cy="62" rx="38" ry="42" fill="${skin}" stroke="#2a1a14" stroke-width="3"/>${eyes}${mouth}${front}${horns}${vein}</svg>`;
 }
 
 /* =====================================================================
@@ -659,7 +697,7 @@ function renderTitle() {
   $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => `
     <button class="diff" data-mode="${k}">${faceSVG(m.char, false)}
       <div><span class="lv ${m.cls}">${m.label}</span><b>${m.title}</b>
-      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}</small></div></button>`).join("");
+      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しEXステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}</small></div></button>`).join("");
   const z = load(LS.zukan, {});
   $("zkTitle").textContent = `${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除`;
   document.body.classList.remove("hell");
@@ -676,27 +714,39 @@ function start(mode) {
   show("game");
 }
 
-// 本命の現在の生存率
+// HARDクリア後、任意で挑む隠しEXステージ（goal+1 〜 EX_GOAL 問目）
+function startEX() {
+  S.run++; S.endless = true; S.q = MODES[S.mode].goal + 1; S.lock = false;
+  closeModals();
+  bumpStats(s => { s.exTries++; });
+  document.body.classList.add("hell");
+  $("hellban").classList.add("on");
+  next();
+  show("game");
+}
+
+// 正解（MAIN）の現在の生存率
 function mainRate() {
   if (!S.endless) return MODES[S.mode].rates.MAIN;
-  const i = S.q - MODES[S.mode].goal - 1;
-  return CONFIG.ENDLESS_RATES[Math.min(i, CONFIG.ENDLESS_RATES.length - 1)];
+  return CONFIG.EX_RATES[Math.min(S.q - MODES[S.mode].goal - 1, CONFIG.EX_RATES.length - 1)];
 }
 
 function next() {
   const m = MODES[S.mode];
-  if (!S.deck.length) S.deck = shuffle(S.endless ? CONST_QUESTIONS : POOL[m.char]).filter(q => q !== S.cur);
+  if (!S.deck.length) S.deck = shuffle(POOL[m.char]).filter(q => q !== S.cur);   // EXでも同じ相手の未出題から続けて出す
   const q = S.cur = S.deck.pop();
   S.shown = shuffle(q.options.map((o, i) => ({ ...o, idx: i })));
-  $("stage").textContent = S.endless ? "隠しステージ：無限地獄編" : `${m.label}：${m.title}`;
-  $("qn").textContent = S.endless ? `${S.q}問目` : `${S.q} / ${m.goal}`;
-  $("bar").style.width = S.endless ? "100%" : ((S.q - 1) / m.goal * 100) + "%";
-  $("face").innerHTML = faceSVG(q.character, "normal");
+  const exN = CONFIG.EX_GOAL - m.goal, exI = S.q - m.goal - 1;
+  $("stage").textContent = S.endless ? "🔥 隠しEXステージ" : `${m.label}：${m.title}`;
+  $("qn").textContent = S.endless ? `${S.q} / ${CONFIG.EX_GOAL}` : `${S.q} / ${m.goal}`;
+  $("bar").style.width = (S.endless ? exI / exN : (S.q - 1) / m.goal) * 100 + "%";
+  if (S.endless) $("hellban").textContent = CONFIG.EX_LINES[Math.min(exI, CONFIG.EX_LINES.length - 1)];
+  $("face").innerHTML = faceSVG(q.character, "normal", S.endless);
   $("face").classList.remove("boomfx");
   $("opts").classList.remove("locked");
   document.body.classList.remove("flash");
   $("prompt").textContent = q.prompt;
-  $("who").textContent = "▲ " + (S.endless ? q.character : m.title);
+  $("who").textContent = "▲ " + (S.endless ? `悪魔化した${q.character} 👿⚡` : m.title);
   const bp = 120 + ((Math.random() * 80) | 0);
   $("mood").innerHTML = `現在の機嫌：<b>血圧${bp}</b>／直前の出来事：${esc(pick(CHARS[q.character].moods.concat(COMMON_MOODS)))}`;
   $("opts").innerHTML = S.shown.map((o, i) => `<button class="opt" data-i="${i}"><span class="k">${"ABCD"[i]}</span><span>${esc(o.text)}</span></button>`).join("");
@@ -713,7 +763,7 @@ function choose(i) {
   // 1) 選択中表示＋全ロック → 2) 相手が黙り込む（タメ）
   $("opts").classList.add("locked");
   $("opts").children[i].classList.add("picked");
-  $("face").innerHTML = faceSVG(ch, "silent");
+  $("face").innerHTML = faceSVG(ch, "silent", S.endless);
   $("prompt").textContent = "……";
   $("prompt").classList.add("silent");
   // 3) タメの後に確率判定
@@ -722,13 +772,13 @@ function choose(i) {
     const survive = Math.random() * 100 < rate;   // ← 確率判定
     $("prompt").classList.remove("silent");
     if (!survive) {
-      $("face").innerHTML = faceSVG(ch, "angry");
+      $("face").innerHTML = faceSVG(ch, "angry", S.endless);
       $("prompt").textContent = o.deathReason;      // この選択肢専用のキレ理由
       $("face").classList.add("boomfx");
       document.body.classList.add("flash");
       return later(CONFIG.BOOM_MS, () => die(o));
     }
-    $("face").innerHTML = faceSVG(ch, "relief");
+    $("face").innerHTML = faceSVG(ch, "relief", S.endless);
     $("prompt").textContent = o.reaction || "……";  // この選択肢専用の返答
     toast("回避成功！");
     bumpStats(s => { s.survived++; });
@@ -739,14 +789,8 @@ function choose(i) {
 function advance() {
   S.q++;
   const m = MODES[S.mode];
-  if (!S.endless && S.q > m.goal) {
-    if (m.endless) {               // HARD突破 → 隠しステージへ
-      bumpStats(s => { s.clears[S.mode] = (s.clears[S.mode] || 0) + 1; });
-      S.endless = true; S.deck = [];
-      document.body.classList.add("hell");
-      $("hellban").classList.add("on");
-    } else return finish(true);
-  }
+  if (!S.endless && S.q > m.goal) return finish(true);                 // 各モードのクリア（HARDはここでEXへの挑戦権）
+  if (S.endless && S.q > CONFIG.EX_GOAL) return finish(true, true);    // EX最終問突破＝伝説
   next();
 }
 
@@ -766,24 +810,57 @@ function die(o) {
   finish(false);
 }
 
-function finish(clear) {
+function finish(clear, legend) {
   const m = MODES[S.mode];
   if (clear) {
-    S.last = { clear: true, reached: m.goal, endless: false };
-    bumpStats(s => { s.clears[S.mode] = (s.clears[S.mode] || 0) + 1; });
+    S.last = { clear: true, legend: !!legend, reached: legend ? CONFIG.EX_GOAL : m.goal, endless: !!legend,
+               exReady: !legend && !!m.endless };   // HARDクリア直後はEXへの挑戦ボタンを出す
+    bumpStats(s => { if (legend) s.legend++; else s.clears[S.mode] = (s.clears[S.mode] || 0) + 1; });
   }
   const best = load(LS.best, {});
   const isBest = S.last.reached > (best[S.mode] || 0);
   if (isBest) { best[S.mode] = S.last.reached; save(LS.best, best); }
+  if (clear) document.body.classList.remove("hell");
   renderResult(isBest);
   S.resultAt = Date.now();
   show("result");
+  if (legend) celebrate();
+}
+
+// 伝説達成：金色フラッシュ＋紙吹雪（軽量なDOM絵文字。数秒で自動で消える）
+function celebrate() {
+  document.body.classList.remove("goldflash"); void document.body.offsetWidth; document.body.classList.add("goldflash");
+  const box = document.createElement("div");
+  box.className = "confetti";
+  const pieces = ["🎉", "🎊", "👑", "✨", "🏆", "💛", "⭐"];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement("i");
+    p.textContent = pieces[i % pieces.length];
+    p.style.left = Math.random() * 100 + "%";
+    p.style.fontSize = 16 + Math.random() * 18 + "px";
+    p.style.animationDuration = 2.2 + Math.random() * 2 + "s";
+    p.style.animationDelay = Math.random() * 1.2 + "s";
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 5000);
 }
 
 function renderResult(isBest) {
   const L = S.last, m = MODES[S.mode];
   const char = L.clear ? m.char : L.q.character;
-  if (L.clear) {
+  if (L.legend) {
+    $("boom").className = "boom legend";
+    $("boom").innerHTML = `<div class="goldbadge">👑 伝説のヒス回避マスター</div>
+      <h2>${CONFIG.EX_GOAL}問完全制覇！</h2><div class="face">${faceSVG(char, "relief")}</div>
+      <div class="roar">生存率約3.6%の奇跡を達成！</div>
+      <div class="prob">あなたは理不尽の頂点を極めました。</div>`;
+  } else if (L.exReady) {
+    $("boom").className = "boom clear";
+    $("boom").innerHTML = `<h2>🎉 ${m.label}モード クリア！</h2><div class="face">${faceSVG(char, false)}</div>
+      <div class="roar">${m.title}を${m.goal}問連続で回避した！</div>
+      <div class="prob">……だが、その先に「裏」がある。挑むかどうかは、あなた次第。</div>`;
+  } else if (L.clear) {
     $("boom").className = "boom clear";
     $("boom").innerHTML = `<h2>🎉 訓練完了！</h2><div class="face">${faceSVG(char, false)}</div>
       <div class="roar">${m.title}を${m.goal}問連続で回避した！</div>
@@ -792,23 +869,35 @@ function renderResult(isBest) {
     const ng = L.o.rate === 0, main = L.o.rate === "MAIN", escape = L.reason === ESCAPE_NG;
     $("boom").className = "boom" + (ng ? " ng" : "");
     $("boom").innerHTML = `<h2>${escape ? "【絶対NG！】<br>うやむやに逃げた！" : ng ? "【絶対NG！】<br>ありえない選択肢！" : main ? "💥 正解なのに爆死！" : "💥 爆死！"}</h2>
-      <div class="face">${faceSVG(char, true)}</div>
+      <div class="face">${faceSVG(char, "angry", L.endless)}</div>
       <div class="roar">「${esc(L.reason)}」</div>
       <div class="prob">${VERDICT[L.o.rate].note}</div>`;
   }
   const best = load(LS.best, {});
-  $("recNow").textContent = `${L.reached}問目` + (L.clear ? "" : "");
+  $("recNow").textContent = L.legend ? "完全制覇" : `${L.reached}問目`;
   $("recBest").innerHTML = `${best[S.mode] || 0}問目${isBest ? ' <small style="color:var(--red)">NEW!</small>' : ""}`;
 
-  if (L.clear) {
-    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！${S.mode !== "HARD" ? "次はさらに理不尽な相手が待っている……" : ""}`;
+  if (L.legend) {
+    $("cause").innerHTML = `<div class="h">👑 結果</div>${esc(m.title)}を${m.goal}問、さらに悪魔化した${esc(m.char)}を${CONFIG.EX_GOAL - m.goal}問、すべて回避した。この記録は誇っていい。`;
+  } else if (L.exReady) {
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。`;
+  } else if (L.clear) {
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！次はさらに理不尽な相手が待っている……`;
   } else {
-    $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しステージ・" : ""}${L.reached}問目）</div>
+    $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しEXステージ・" : ""}${L.reached}問目）</div>
       vs ${esc(L.q.character)}「${esc(L.q.prompt)}」<br>
       あなた：<q>${esc(L.o.text)}</q><br>→ キレ理由：「${esc(L.reason)}」`;
   }
   $("nextBtn").style.display = S.mode === "HARD" ? "none" : "";
   $("nextBtn").textContent = S.mode === "EASY" ? "NORMALへ" : "HARDへ";
+  $("exBtn").style.display = L.exReady ? "" : "none";
+  $("shareBtn").className = "big " + (L.legend ? "gold" : "x");
+  $("shareBtn").style.order = L.legend ? -1 : 0;           // 伝説達成時は記念ポストを一番上に
+  $("shareBtn").textContent = L.legend ? `🏆 ${CONFIG.EX_GOAL}問完全制覇記念ポスト（X共有）` : "𝕏 記録をポストする";
+  // HARDクリア直後と伝説達成時は、誤タップで挑戦権・余韻を失わないよう「どこでもタップでリトライ」を止める
+  const tapRetry = !(L.exReady || L.legend);
+  $("result").classList.toggle("tapretry", tapRetry);
+  $("retryHint").textContent = tapRetry ? "▶ 画面タップ / Enter で即リトライ" : "▼ ボタンを選んでください";
   renderZukan(L.clear ? null : L.q.id + ":" + L.o.idx);
 }
 
@@ -846,13 +935,16 @@ function openZukan(ch) {
 function share() {
   const L = S.last;
   const build = r => {
+    if (L.legend) return `【ヒス回避ゲーム】👑伝説のヒス回避マスター達成！！\n` +
+      `理不尽ヒス${CONFIG.EX_GOAL}問を完全制覇。生存率約3.6%の奇跡を起こした！\n` +
+      `あなたは理不尽の頂点を極められるか？\n#ヒス回避ゲーム #対ヒス訓練 #伝説のヒス回避マスター ${CONFIG.SHARE_URL}`;
     let cause;
     if (L.clear) cause = `敗因なし！${MODES[S.mode].title}の訓練を完了`;
     else if (L.o.rate === 0) cause = `絶対NG「${L.o.text}」を選んで即爆死（学習不足）`;
     else if (L.o.rate === "MAIN") cause = `正解を選んだのに「${r}」とキレられた（理不尽）`;
     else cause = `「${r}」とキレられて爆死`;
     return `【ヒス回避ゲーム】対ヒス訓練で『${L.reached}問目』まで生き残った！！\n` +
-      `👉 記録：【${L.reached}問目】到達${L.endless ? "（隠しステージ突入！）" : `（${MODES[S.mode].label}）`}\n` +
+      `👉 記録：【${L.reached}問目】到達${L.endless ? "（隠しEXステージ突入！）" : `（${MODES[S.mode].label}）`}\n` +
       `💀 最後の敗因：『${cause}』\n${CONFIG.HASHTAGS} ${CONFIG.SHARE_URL}`;
   };
   // Xの文字数上限（全角2・URL23換算で280）に収まるよう、キレ理由だけを末尾から詰める
@@ -875,9 +967,10 @@ const ACHIEVEMENTS = [
   { icon: "🌱", name: "初回避",             desc: "1問回避する",                              ok: (s) => s.survived >= 1 },
   { icon: "🧾", name: "クレーマー撃退",     desc: "EASYをクリア",                             ok: (s) => (s.clears.EASY || 0) > 0 },
   { icon: "💔", name: "彼女の機嫌マスター", desc: "NORMALをクリア",                           ok: (s) => (s.clears.NORMAL || 0) > 0 },
-  { icon: "👩", name: "母の壁を越えし者",   desc: "HARDをクリア（隠しステージ到達）",         ok: (s) => (s.clears.HARD || 0) > 0 },
-  { icon: "🔥", name: "無限地獄の住人",     desc: "HARDで通算10問目に到達",               ok: (s, b) => (b.HARD || 0) >= 10 },
-  { icon: "👹", name: "地獄の底を見た",     desc: "HARDで通算15問目に到達",               ok: (s, b) => (b.HARD || 0) >= 15 },
+  { icon: "👩", name: "母の壁を越えし者",   desc: "HARDをクリア",                             ok: (s) => (s.clears.HARD || 0) > 0 },
+  { icon: "🔥", name: "裏ステージの扉",     desc: "HARDをクリアして隠しEXステージに挑む",  ok: (s) => s.exTries >= 1 },
+  { icon: "👹", name: "地獄の底を見た",     desc: "隠しEXステージの最終問（10問目）に到達", ok: (s, b) => (b.HARD || 0) >= 10 },
+  { icon: "👑", name: "伝説のヒス回避マスター", desc: "隠しEXステージまで10問完全制覇",       ok: (s) => s.legend >= 1 },
   { icon: "🤯", name: "理不尽の洗礼",       desc: "正解を選んだのに爆死する",                 ok: (s) => s.mainDeaths >= 1 },
   { icon: "💣", name: "地雷を踏み抜いた",   desc: "絶対NGを選んで爆死する",                   ok: (s) => s.ngDeaths >= 1 },
   { icon: "🏃", name: "逃げは許されない",   desc: "「確認してまいります」で爆死する",         ok: (s) => s.escapeDeaths >= 1 },
@@ -895,8 +988,8 @@ function renderStats() {
   $("statsBody").innerHTML = `
     <div class="sec"><h3>クリア状況</h3><div class="clr">${Object.entries(MODES).map(([k, m]) => {
       const cleared = (s.clears[k] || 0) > 0;
-      return `<div><span class="lv ${m.cls}">${m.label}</span><span>${esc(m.title)}<br><small>ベスト：${b[k] ? b[k] + "問目" : "—"}${m.endless && (b[k] || 0) > m.goal ? "（隠しステージ）" : ""}</small></span>
-        <b class="${cleared ? "ok" : "no"}">${cleared ? "CLEAR!" : "未クリア"}</b></div>`;
+      return `<div><span class="lv ${m.cls}">${m.label}</span><span>${esc(m.title)}<br><small>ベスト：${b[k] ? b[k] + "問目" : "—"}${m.endless && (b[k] || 0) > m.goal ? "（隠しEXステージ）" : ""}</small></span>
+        <b class="${cleared ? "ok" : "no"}">${m.endless && s.legend ? "👑 完全制覇" : cleared ? "CLEAR!" : "未クリア"}</b></div>`;
     }).join("")}</div></div>
     <div class="sec"><h3>プレイデータ</h3><div class="nums">
       <div><b>${s.plays}</b><small>プレイ回数</small></div>
@@ -937,11 +1030,13 @@ $("result").addEventListener("click", e => {
   if (Date.now() - S.resultAt < 100) return;              // 連打による誤リトライ防止（0.1秒）
   if (e.target.closest("details")) return;
   const b = e.target.closest("[data-act]");
+  if (!b && !$("result").classList.contains("tapretry")) return;   // HARDクリア直後・伝説達成時はボタンのみ
   const act = b ? b.dataset.act : "retry";                 // 画面のどこをタップしても即リトライ
   if (act === "retry") start(S.mode);
   else if (act === "share") share();
   else if (act === "title") renderTitle();
   else if (act === "next") start(S.mode === "EASY" ? "NORMAL" : "HARD");
+  else if (act === "ex") startEX();
 });
 document.addEventListener("keydown", e => {
   if (document.querySelector(".modal.on")) {              // モーダル表示中は Esc で閉じるだけ
@@ -952,7 +1047,7 @@ document.addEventListener("keydown", e => {
     if (e.key === "Escape") return openModal("homeModal");
     const i = "1234".indexOf(e.key) >= 0 ? "1234".indexOf(e.key) : "abcd".indexOf(e.key.toLowerCase());
     if (i >= 0) choose(i);
-  } else if ($("result").classList.contains("on") && (e.key === "Enter" || e.key === " ") && Date.now() - S.resultAt > 100) {
+  } else if ($("result").classList.contains("on") && $("result").classList.contains("tapretry") && (e.key === "Enter" || e.key === " ") && Date.now() - S.resultAt > 100) {
     e.preventDefault(); start(S.mode);
   } else if (e.key === "Escape") renderTitle();
 });
