@@ -570,6 +570,23 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
 .panel.reveal .big.sub{background:#2a1a14;color:#ffe9e4;border-color:#5a1c20}
 @keyframes rvin{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:none;opacity:1}}
 @keyframes of{0%{background:#ff1a1a}35%{background:#ffde00}100%{background:var(--bg)}}
+/* 要望・バグ報告 */
+.fbBtn{display:block;margin:2px auto 8px;font-size:12.5px;font-weight:800;color:var(--sub);text-decoration:underline;padding:6px}
+.fb{display:grid;gap:10px;font-size:13px}
+.fb fieldset{border:0}.fb legend{font-weight:900;margin-bottom:4px}
+.fb label{display:grid;gap:4px;font-weight:900}
+.fb label small{font-weight:700;color:var(--sub)}
+.fb .req{font-size:10px;background:var(--red);color:#fff;border-radius:4px;padding:0 5px;margin-left:4px}
+.fb textarea,.fb input[type=text]{font:inherit;font-weight:500;width:100%;border:2px solid #2a1a14;border-radius:10px;padding:8px 10px;background:var(--card);color:var(--ink)}
+.kinds{display:flex;flex-wrap:wrap;gap:6px}
+.kind{display:inline-flex!important;align-items:center;cursor:pointer}
+.kind input{position:absolute;opacity:0;pointer-events:none}
+.kind span{border:2px solid #2a1a14;border-radius:99px;padding:4px 12px;font-size:12.5px;background:var(--card)}
+.kind input:checked+span{background:#2a1a14;color:#fff}
+.kind input:focus-visible+span{outline:3px solid var(--gold)}
+.fbnote{font-size:11.5px;color:var(--sub);font-weight:700}
+.fbmsg{font-weight:900;text-align:center;min-height:1.2em}
+.fblink{text-align:center;font-size:12px;color:var(--sub);font-weight:700}
 .flash{animation:fl .35s}
 .opts.locked .opt{pointer-events:none;opacity:.4;box-shadow:0 4px 0 #2a1a14}
 .opts.locked .opt.picked{opacity:1;background:#ffde00;color:#2a1a14;transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
@@ -593,6 +610,7 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
       <button class="big sub statsBtn" id="statsBtn">🏆 実績・<br>クリアステータス</button>
       <button class="big sub statsBtn" id="zkBtn">📖 地雷セリフ図鑑<br><small id="zkTitle"></small></button>
     </div>
+    <button class="fbBtn" id="fbBtn">💬 要望・バグ報告はこちら</button>
   </section>
 
   <!-- ===== ゲーム ===== -->
@@ -660,6 +678,25 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
   </div>
 </div>
 
+<!-- ===== 要望・バグ報告（RED FREE GAMES 共通のGoogleフォームへ送信） ===== -->
+<div class="modal" id="fbModal" role="dialog" aria-modal="true" aria-labelledby="fbTitle">
+  <div class="panel">
+    <div class="phead"><button class="home" data-close>🏠 HOME</button><h2 id="fbTitle">💬 要望・バグ報告</h2></div>
+    <form id="fbForm" class="fb">
+      <p class="fbnote">「こうしてほしい」「ここがおかしい」「このセリフ最高」など、なんでも送ってください。今後のアップデートの参考にします。</p>
+      <fieldset><legend>種類</legend><div class="kinds" id="fbKinds"></div></fieldset>
+      <label>内容 <b class="req">必須</b>
+        <textarea id="fbMsg" rows="5" maxlength="1000" required placeholder="例：鬼モードの〇問目で、正解を選んだのにボタンが反応しなかった"></textarea></label>
+      <label>連絡先 <small>（任意・返信が必要な場合のみ。XのIDなど）</small>
+        <input id="fbContact" type="text" maxlength="100" placeholder="@your_id"></label>
+      <p class="fbnote">※ 端末・ブラウザ・ゲームの進行状況が自動で添付されます。本名・住所などの個人情報は書かないでください。</p>
+      <button class="big gold" type="submit" id="fbSend">📨 送信する</button>
+      <p class="fbmsg" id="fbResult" role="status"></p>
+      <a class="fblink" id="fbOpen" target="_blank" rel="noopener">Googleフォームで開いて送る ↗</a>
+    </form>
+  </div>
+</div>
+
 <!-- ===== プレイ中にHOMEを押した時の確認 ===== -->
 <div class="modal" id="homeModal" role="dialog" aria-modal="true">
   <div class="panel small">
@@ -680,6 +717,14 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
  * ===================================================================== */
 const CONFIG = {
   COFFEE_URL: "https://buymeacoffee.com/red_freegames",   // 投げ銭ページ
+  // 要望・バグ報告フォーム（RED FREE GAMES 共通のGoogleフォーム）。entry.* はフォームの各質問のID
+  FEEDBACK: {
+    game: "ヒス回避ゲーム",                      // フォームの「対象のゲーム」の選択肢と完全一致させること
+    action: "https://docs.google.com/forms/d/e/1FAIpQLSfJ2DevI46AJiB_kUAmPGOvckFRqzzSP_iCVd5qiikxr9SIOg/formResponse",
+    view:   "https://docs.google.com/forms/d/e/1FAIpQLSfJ2DevI46AJiB_kUAmPGOvckFRqzzSP_iCVd5qiikxr9SIOg/viewform",
+    kinds: ["バグ報告", "要望・改善のアイデア", "感想", "その他"],
+    entry: { game: "entry.2056875219", kind: "entry.1340021649", message: "entry.1317669719", contact: "entry.2028433641", env: "entry.875830690" },
+  },
   SHARE_URL: "https://red-freegames.github.io/hisu-kaihi-game/",          // 公開URL（ポストに載るURL）
   HASHTAGS: "#ヒス回避ゲーム #対ヒス訓練 #クソゲー",
   TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
@@ -1184,6 +1229,62 @@ function renderStats() {
     }).join("")}</ul></div>`;
 }
 
+/* =====================================================================
+ *  要望・バグ報告（Googleフォームへ直接送信。失敗時はフォームを開いて送れる）
+ * ===================================================================== */
+function feedbackEnv() {
+  const s = loadStats(), b = load(LS.best, {});
+  return [
+    `画面: ${innerWidth}x${innerHeight} (dpr ${devicePixelRatio || 1})`,
+    `UA: ${navigator.userAgent}`,
+    `ベスト: ${Object.keys(MODES).filter(isUnlocked).map(k => `${MODES[k].label}=${b[k] || 0}`).join(" / ")}`,
+    `プレイ${s.plays}回 / 生存${s.survived}問 / 爆死${s.deaths}回 / 完全制覇${s.legend}回`,
+    `URL: ${location.href.split("#")[0]}`,
+  ].join("\n");
+}
+function feedbackFields(kind, message, contact) {
+  const F = CONFIG.FEEDBACK, p = new URLSearchParams();
+  p.append(F.entry.game, F.game);
+  p.append(F.entry.kind, kind);
+  if (message) p.append(F.entry.message, message);
+  if (contact) p.append(F.entry.contact, contact);
+  p.append(F.entry.env, feedbackEnv());
+  return p;
+}
+function openFeedback() {
+  const F = CONFIG.FEEDBACK;
+  $("fbKinds").innerHTML = F.kinds.map((k, i) =>
+    `<label class="kind"><input type="radio" name="fbKind" value="${esc(k)}"${i === 0 ? " checked" : ""}><span>${esc(k)}</span></label>`).join("");
+  $("fbResult").textContent = "";
+  $("fbSend").disabled = false;
+  updateFeedbackLink();
+  openModal("fbModal");
+}
+function updateFeedbackLink() {
+  const kind = (document.querySelector('input[name="fbKind"]:checked') || {}).value || CONFIG.FEEDBACK.kinds[0];
+  const p = feedbackFields(kind, $("fbMsg").value.trim(), $("fbContact").value.trim());
+  p.append("usp", "pp_url");
+  $("fbOpen").href = CONFIG.FEEDBACK.view + "?" + p.toString();
+}
+async function sendFeedback(e) {
+  e.preventDefault();
+  const msg = $("fbMsg").value.trim();
+  if (!msg) { $("fbResult").textContent = "内容を入力してください"; return $("fbMsg").focus(); }
+  const kind = document.querySelector('input[name="fbKind"]:checked').value;
+  $("fbSend").disabled = true; $("fbResult").textContent = "送信中……";
+  try {
+    // Googleフォームは別オリジンなので no-cors で送る（応答は読めないが、送信自体は受け付けられる）
+    await fetch(CONFIG.FEEDBACK.action, { method: "POST", mode: "no-cors", body: feedbackFields(kind, msg, $("fbContact").value.trim()) });
+    $("fbResult").textContent = "✅ 送信しました！ありがとうございます。";
+    $("fbMsg").value = ""; $("fbContact").value = "";
+    updateFeedbackLink();
+    setTimeout(() => { $("fbSend").disabled = false; }, 3000);   // 連打防止
+  } catch (err) {
+    $("fbResult").textContent = "⚠ 送信できませんでした。下の「Googleフォームで開いて送る」から送れます。";
+    $("fbSend").disabled = false;
+  }
+}
+
 const openModal = id => $(id).classList.add("on");
 function closeModals() { document.querySelectorAll(".modal.on").forEach(m => m.classList.remove("on")); }
 function openStats() { renderStats(); openModal("statsModal"); }
@@ -1192,6 +1293,10 @@ function openStats() { renderStats(); openModal("statsModal"); }
  *  入力
  * ===================================================================== */
 $("statsBtn").addEventListener("click", openStats);
+$("fbBtn").addEventListener("click", openFeedback);
+$("fbForm").addEventListener("submit", sendFeedback);
+$("fbForm").addEventListener("input", updateFeedbackLink);
+$("fbModal").addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target.id === "fbModal") closeModals(); });
 $("revealShare").addEventListener("click", shareReveal);
 $("revealGo").addEventListener("click", () => start("ONI"));
 $("revealModal").addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target.id === "revealModal") closeModals(); });
