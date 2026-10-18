@@ -424,7 +424,15 @@ body.hell .zk li.new{background:#5a3a00}
 /* HOME / モーダル / 実績 */
 .home{flex:none;background:var(--card);border:2px solid #2a1a14;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:900;white-space:nowrap}
 .home:active{transform:translateY(1px)}
-.statsBtn{margin:4px 0 6px;font-size:15px;padding:12px}
+.statsBtn{font-size:14px;padding:10px 6px;line-height:1.35}
+.statsBtn small{font-size:11px;color:var(--sub);font-weight:800}
+.titleBtns{margin:4px 0 6px}
+.zksum{font-size:12px;color:var(--sub);font-weight:700}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tab{background:var(--card);border:2px solid #2a1a14;border-radius:10px;padding:5px 2px;font-size:12px;font-weight:900;line-height:1.3}
+.tab small{display:block;font-size:10px;color:var(--sub)}
+.tab.on{background:#2a1a14;color:#fff}.tab.on small{color:#ddd}
+.panel .zk{max-height:none;margin-top:0}
 .modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(20,8,6,.6);padding:16px;overflow:auto}
 .modal.on{display:flex;align-items:flex-start;justify-content:center}
 .panel{width:100%;max-width:520px;margin:auto;background:var(--bg);color:var(--ink);border:3px solid #2a1a14;border-radius:18px;padding:14px;display:grid;gap:12px}
@@ -469,8 +477,10 @@ body.hell .zk li.new{background:#5a3a00}
     <p class="concept">いつか訪れる（あるいは日常の）<br>ヒス対面時に備えろ！</p>
     <p class="catch">ヒスを起こす人間（地雷）の機嫌は、時間・気分・血圧・直前の出来事によって<b>秒単位で変化する！</b>昨日までの正解が今日の正解とは限らない……自分の運と直感を研ぎ澄ませ！</p>
     <div id="diffs"></div>
-    <button class="big sub statsBtn" id="statsBtn">🏆 実績・クリアステータス</button>
-    <p class="best" id="zkTitle"></p>
+    <div class="row2 titleBtns">
+      <button class="big sub statsBtn" id="statsBtn">🏆 実績・<br>クリアステータス</button>
+      <button class="big sub statsBtn" id="zkBtn">📖 地雷セリフ図鑑<br><small id="zkTitle"></small></button>
+    </div>
   </section>
 
   <!-- ===== ゲーム ===== -->
@@ -508,6 +518,17 @@ body.hell .zk li.new{background:#5a3a00}
   <div class="panel">
     <div class="phead"><button class="home" data-close>🏠 HOME</button><h2 id="statsTitle">🏆 実績・クリアステータス</h2></div>
     <div id="statsBody"></div>
+    <button class="big sub" data-close>✕ 閉じる</button>
+  </div>
+</div>
+
+<!-- ===== 地雷セリフ図鑑 ===== -->
+<div class="modal" id="zukanModal" role="dialog" aria-modal="true" aria-labelledby="zkModalTitle">
+  <div class="panel">
+    <div class="phead"><button class="home" data-close>🏠 HOME</button><h2 id="zkModalTitle">📖 地雷セリフ図鑑</h2></div>
+    <p class="zksum" id="zkModalSum"></p>
+    <div class="tabs" id="zkTabs"></div>
+    <div class="sec"><ul class="zk" id="zkModalList"></ul></div>
     <button class="big sub" data-close>✕ 閉じる</button>
   </div>
 </div>
@@ -635,7 +656,7 @@ function renderTitle() {
       <div><span class="lv ${m.cls}">${m.label}</span><b>${m.title}</b>
       <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しステージ…？" : ""}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}</small></div></button>`).join("");
   const z = load(LS.zukan, {});
-  $("zkTitle").textContent = `📖 地雷セリフ図鑑：${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除済み`;
+  $("zkTitle").textContent = `${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除`;
   document.body.classList.remove("hell");
   show("title");
 }
@@ -786,16 +807,35 @@ function renderResult(isBest) {
   renderZukan(L.clear ? null : L.q.id + ":" + L.o.idx);
 }
 
-function renderZukan(newKey) {
-  const z = load(LS.zukan, {});
-  const items = [];
-  CONST_QUESTIONS.forEach(q => q.options.forEach((o, i) => { const k = q.id + ":" + i; if (z[k]) items.push({ q, o, i, k, n: z[k] }); }));
+// 図鑑の項目一覧（ch を渡すとそのキャラだけ）。newKey は直前に踏んだ地雷（先頭に出して NEW 表示）
+function zukanItems(ch, newKey) {
+  const z = load(LS.zukan, {}), items = [];
+  CONST_QUESTIONS.forEach(q => { if (!ch || q.character === ch) q.options.forEach((o, i) => { const k = q.id + ":" + i; if (z[k]) items.push({ q, o, i, k, n: z[k] }); }); });
   items.sort((a, b) => (b.k === newKey) - (a.k === newKey) || rnum(a.o.rate) - rnum(b.o.rate));
-  $("zkSum").textContent = `📖 解除した地雷セリフ図鑑（${items.length} / ${CONST_QUESTIONS.length * 4}）`;
-  $("zkList").innerHTML = items.length ? items.map(x => `<li class="${x.k === newKey ? "new" : ""}">
-      <span class="badge r${x.o.rate}">${VERDICT[x.o.rate].tag}</span> <b>${esc(x.o.text)}</b>${x.k === newKey && S.last.isNew ? ' <b style="color:var(--red)">NEW</b>' : ""}<br>
+  return items;
+}
+function zukanHTML(items, newKey) {
+  return items.length ? items.map(x => `<li class="${x.k === newKey ? "new" : ""}">
+      <span class="badge r${x.o.rate}">${VERDICT[x.o.rate].tag}</span> <b>${esc(x.o.text)}</b>${x.k === newKey && S.last && S.last.isNew ? ' <b style="color:var(--red)">NEW</b>' : ""}<br>
       <span class="who2">vs ${esc(x.q.character)}「${esc(x.q.prompt)}」 ／ キレ理由：「${esc(x.o.deathReason)}」 ／ 被弾${x.n}回</span></li>`).join("")
     : "<li>まだ地雷を踏んでいない……</li>";
+}
+function renderZukan(newKey) {
+  const items = zukanItems(null, newKey);
+  $("zkSum").textContent = `📖 解除した地雷セリフ図鑑（${items.length} / ${CONST_QUESTIONS.length * 4}）`;
+  $("zkList").innerHTML = zukanHTML(items, newKey);
+}
+// タイトルから開く図鑑（キャラ別タブ）
+function openZukan(ch) {
+  const all = zukanItems(null), items = ch ? zukanItems(ch) : all;
+  const tabs = [["", "全員"], ...Object.values(MODES).map(m => [m.char, m.char])];
+  $("zkModalSum").textContent = `解除：${all.length} / ${CONST_QUESTIONS.length * 4}（踏んだ地雷だけが載ります）`;
+  $("zkTabs").innerHTML = tabs.map(([v, label]) => {
+    const n = v ? zukanItems(v).length : all.length, max = (v ? POOL[v].length : CONST_QUESTIONS.length) * 4;
+    return `<button class="tab${(ch || "") === v ? " on" : ""}" data-ch="${v}">${label}<small>${n}/${max}</small></button>`;
+  }).join("");
+  $("zkModalList").innerHTML = zukanHTML(items, null);
+  openModal("zukanModal");
 }
 
 function share() {
@@ -875,6 +915,12 @@ function openStats() { renderStats(); openModal("statsModal"); }
  *  入力
  * ===================================================================== */
 $("statsBtn").addEventListener("click", openStats);
+$("zkBtn").addEventListener("click", () => openZukan(""));
+$("zukanModal").addEventListener("click", e => {
+  const t = e.target.closest("[data-ch]");
+  if (t) return openZukan(t.dataset.ch);
+  if (e.target.closest("[data-close]") || e.target.id === "zukanModal") closeModals();
+});
 $("statsModal").addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target.id === "statsModal") closeModals(); });
 $("gameHome").addEventListener("click", () => openModal("homeModal"));    // プレイ中は確認を挟む
 $("homeYes").addEventListener("click", renderTitle);
