@@ -464,7 +464,12 @@ body.hell .zk li.new{background:#5a3a00}
 .corner{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);font-size:11px;font-weight:800;pointer-events:none;z-index:5}
 .corner a,.corner span{pointer-events:auto;background:var(--card);border:2px solid #2a1a14;border-radius:99px;padding:3px 10px;text-decoration:none;white-space:nowrap}
 .corner a{background:#ffdd57;color:#2a1a14}
-.flash{animation:fl .25s}
+.flash{animation:fl .35s}
+.opts.locked .opt{pointer-events:none;opacity:.4;box-shadow:0 4px 0 #2a1a14}
+.opts.locked .opt.picked{opacity:1;background:#ffde00;color:#2a1a14;transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
+.bubble.silent{color:var(--sub);font-size:28px;letter-spacing:.2em;justify-content:center}
+.face.boomfx{animation:bm .38s;border-color:var(--red);box-shadow:0 0 0 6px rgba(232,38,43,.35)}
+@keyframes bm{0%{transform:scale(1.25) rotate(-6deg)}30%{transform:scale(1.1) rotate(5deg)}60%{transform:scale(1.05) rotate(-3deg)}100%{transform:none}}
 @keyframes fl{0%{background:#ff0000}100%{background:var(--bg)}}
 @media (min-width:600px){.logo h1{font-size:54px}.bubble{font-size:18px}.opt{font-size:16px}}
 @media (max-width:360px){.face{width:84px;height:84px}.bubble{min-height:84px;font-size:15px}.logo h1{font-size:36px}}
@@ -524,6 +529,9 @@ const CONFIG = {
   COFFEE_URL: "https://ko-fi.com/",            // ← 投げ銭ページのURLに差し替えてください
   SHARE_URL: "https://sabugangben3-hue.github.io/hisu-kaihi-game/",          // 公開URL（ポストに載るURL）
   HASHTAGS: "#ヒス回避ゲーム #対ヒス訓練 #クソゲー",
+  TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
+  REACT_MS: 550,                              // 生存時、許しのセリフを見せる長さ
+  BOOM_MS: 380,                               // 死亡時、キレ顔＋爆発を見せてからリザルトへ
   ENDLESS_RATES: [60, 55, 50],                // 隠しステージで本命(HARD 69%)が1問ごとに下がる値（最後の値で下げ止まり）
 };
 const MODES = {
@@ -532,11 +540,14 @@ const MODES = {
   HARD:   { char: "母親",       goal: 10, main: 69, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true },
 };
 const CHARS = {
-  "クレーマー": { roars: ["責任者出せェェェ！！", "SNSで晒してやる！！", "客をナメてんのか！！", "二度と来るか！！（明日も来る）"],
+  "クレーマー": { forgive: ["……まあ、今回はいいだろう", "……チッ、次はないぞ", "……ふん、分かればいいんだ", "……早くしてくれよ"],
+                  roars: ["責任者出せェェェ！！", "SNSで晒してやる！！", "客をナメてんのか！！", "二度と来るか！！（明日も来る）"],
                   moods: ["朝の電車で足を踏まれた", "競馬で大穴を外した直後", "駐車場が満車だった", "コーヒーがぬるかった", "妻に小言を言われて出てきた"] },
-  "彼女":       { roars: ["もういい！！知らない！！", "なんでわかってくれないの！？", "前から思ってたけど！！", "既読無視するから！！"],
+  "彼女":       { forgive: ["……まあ、今回は許してあげる", "……ふーん。ならいいけど", "……次はないからね", "……うん。わかった"],
+                  roars: ["もういい！！知らない！！", "なんでわかってくれないの！？", "前から思ってたけど！！", "既読無視するから！！"],
                   moods: ["前髪が決まらなかった", "友達の惚気話を聞いた直後", "生理前", "インスタのいいねが少なかった", "推しが熱愛報道された"] },
-  "母親":       { roars: ["いい加減にしなさい！！", "誰に似たのかしら！！", "お母さんもう知らないからね！！", "口答えしない！！"],
+  "母親":       { forgive: ["……まあ、分かればいいのよ", "……もう、しょうがないわね", "……今回だけよ", "……ご飯できてるわよ"],
+                  roars: ["いい加減にしなさい！！", "誰に似たのかしら！！", "お母さんもう知らないからね！！", "口答えしない！！"],
                   moods: ["PTAの会合帰り", "体重計に乗った直後", "ワイドショーで嫌なニュースを見た", "特売の卵が売り切れだった", "お父さんが靴下を脱ぎっぱなし"] },
 };
 const COMMON_MOODS = ["低気圧で頭痛", "血圧が秒単位で乱高下中", "空腹", "寝不足", "なぜか今日は機嫌がいい（危険）", "さっきまで笑っていた（危険）"];
@@ -553,16 +564,29 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { c
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-/* ===== 表情イラスト（通常 / 爆発 の静止画切り替えのみ） ===== */
-function faceSVG(ch, angry) {
-  const skin = angry ? "#ff7466" : "#ffd9bd";
-  const eyes = angry
-    ? '<path d="M36 50 L52 57 M84 50 L68 57" stroke="#2a1a14" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="63" r="4"/><circle cx="75" cy="63" r="4"/>'
-    : '<path d="M37 52 L51 54 M83 52 L69 54" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/><circle cx="45" cy="62" r="4"/><circle cx="75" cy="62" r="4"/>';
-  const mouth = angry
-    ? '<path d="M44 82 Q60 70 76 82 L72 94 Q60 88 48 94 Z" fill="#7a0d0d" stroke="#2a1a14" stroke-width="3"/><path d="M48 82 L72 82" stroke="#fff" stroke-width="4"/>'
-    : '<path d="M48 84 Q60 80 72 84" fill="none" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>';
-  const vein = angry ? '<text x="84" y="34" font-size="26">💢</text><path d="M10 30 l8 6 M14 20 l6 9 M106 64 l8 -4" stroke="#e8262b" stroke-width="4" stroke-linecap="round"/>' : "";
+/* ===== 表情イラスト（静止画切り替えのみ）=====
+ *  mood: "normal"（通常）| "silent"（……不穏・無言）| "relief"（安堵）| "angry"（キレ顔）
+ *  ※ true / false は "angry" / "normal" として扱う */
+const FACE = {
+  normal: { skin: "#ffd9bd",
+    eyes: '<path d="M37 52 L51 54 M83 52 L69 54" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/><circle cx="45" cy="62" r="4"/><circle cx="75" cy="62" r="4"/>',
+    mouth: '<path d="M48 84 Q60 80 72 84" fill="none" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>', fx: "" },
+  silent: { skin: "#e9c7b6",
+    eyes: '<path d="M37 55 L52 55 M68 55 L83 55" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/><path d="M39 63 L51 63 M69 63 L81 63" stroke="#2a1a14" stroke-width="5" stroke-linecap="round"/>',
+    mouth: '<path d="M52 85 L68 85" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>',
+    fx: '<g stroke="#5b4a8a" stroke-width="3" opacity=".75"><path d="M40 26 V44 M48 24 V42 M56 23 V40 M64 23 V40 M72 24 V42 M80 26 V44"/></g><text x="86" y="40" font-size="22" font-weight="900" fill="#2a1a14">…</text><path d="M96 56 q6 10 0 14 q-6 -4 0 -14Z" fill="#7fc8ff" stroke="#2a1a14" stroke-width="1.5"/>' },
+  relief: { skin: "#ffd9bd",
+    eyes: '<path d="M38 63 Q45 57 52 63 M68 63 Q75 57 82 63" fill="none" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>',
+    mouth: '<path d="M50 83 Q60 88 70 83" fill="none" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>',
+    fx: '<path d="M88 78 q10 -2 14 4" fill="none" stroke="#9ab" stroke-width="3" stroke-linecap="round"/><text x="92" y="74" font-size="13" fill="#7a8a9a">ふぅ</text>' },
+  angry: { skin: "#ff7466",
+    eyes: '<path d="M36 50 L52 57 M84 50 L68 57" stroke="#2a1a14" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="63" r="4"/><circle cx="75" cy="63" r="4"/>',
+    mouth: '<path d="M44 82 Q60 70 76 82 L72 94 Q60 88 48 94 Z" fill="#7a0d0d" stroke="#2a1a14" stroke-width="3"/><path d="M48 82 L72 82" stroke="#fff" stroke-width="4"/>',
+    fx: '<text x="84" y="34" font-size="26">💢</text><path d="M10 30 l8 6 M14 20 l6 9 M106 64 l8 -4" stroke="#e8262b" stroke-width="4" stroke-linecap="round"/>' },
+};
+function faceSVG(ch, mood) {
+  const f = FACE[mood === true ? "angry" : mood || "normal"];
+  const skin = f.skin, eyes = f.eyes, mouth = f.mouth, vein = f.fx;
   let back = "", front = "";
   if (ch === "クレーマー") {
     back = '<rect x="38" y="104" width="44" height="20" fill="#3a4a7a"/><path d="M56 104 L64 104 L66 120 L60 124 L54 120Z" fill="#e8262b"/>';
@@ -580,7 +604,7 @@ function faceSVG(ch, angry) {
 /* =====================================================================
  *  ゲーム状態
  * ===================================================================== */
-const S = { mode: null, q: 0, deck: [], cur: null, shown: [], endless: false, lock: false, last: null, resultAt: 0 };
+const S = { run: 0, mode: null, q: 0, deck: [], cur: null, shown: [], endless: false, lock: false, last: null, resultAt: 0 };
 const POOL = {};
 CONST_QUESTIONS.forEach(q => (POOL[q.character] = POOL[q.character] || []).push(q));
 let toastTimer;
@@ -591,6 +615,7 @@ function show(id) {
 }
 
 function renderTitle() {
+  S.run++;
   const best = load(LS.best, {});
   $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => `
     <button class="diff" data-mode="${k}">${faceSVG(m.char, false)}
@@ -603,7 +628,7 @@ function renderTitle() {
 }
 
 function start(mode) {
-  S.mode = mode; S.q = 1; S.endless = false; S.lock = false; S.deck = [];
+  S.run++; S.mode = mode; S.q = 1; S.endless = false; S.lock = false; S.deck = [];
   document.body.classList.remove("hell");
   $("hellban").classList.remove("on");
   next();
@@ -625,7 +650,10 @@ function next() {
   $("stage").textContent = S.endless ? "隠しステージ：無限地獄編" : `${m.label}：${m.title}`;
   $("qn").textContent = S.endless ? `${S.q}問目` : `${S.q} / ${m.goal}`;
   $("bar").style.width = S.endless ? "100%" : ((S.q - 1) / m.goal * 100) + "%";
-  $("face").innerHTML = faceSVG(q.character, false);
+  $("face").innerHTML = faceSVG(q.character, "normal");
+  $("face").classList.remove("boomfx");
+  $("opts").classList.remove("locked");
+  document.body.classList.remove("flash");
   $("prompt").textContent = q.prompt;
   $("who").textContent = "▲ " + (S.endless ? q.character : m.title);
   const bp = 120 + ((Math.random() * 80) | 0);
@@ -634,15 +662,39 @@ function next() {
   S.lock = false;
 }
 
+// run が変わったら（リトライ・タイトル復帰）待機中のタイマーは無効
+const later = (ms, fn) => { const run = S.run; setTimeout(() => { if (run === S.run) fn(); }, ms); };
+
 function choose(i) {
   if (S.lock || !S.shown[i]) return;
   S.lock = true;
-  const o = S.shown[i];
-  const rate = o.rate === "MAIN" ? mainRate() : o.rate;
-  const survive = Math.random() * 100 < rate;   // ← 確率判定
-  if (!survive) return die(o, rate);
+  const o = S.shown[i], ch = S.cur.character;
+  // 1) 選択中表示＋全ロック → 2) 相手が黙り込む（タメ）
+  $("opts").classList.add("locked");
+  $("opts").children[i].classList.add("picked");
+  $("face").innerHTML = faceSVG(ch, "silent");
+  $("prompt").textContent = "……";
+  $("prompt").classList.add("silent");
+  // 3) タメの後に確率判定
+  later(CONFIG.TAME_MS, () => {
+    const rate = o.rate === "MAIN" ? mainRate() : o.rate;
+    const survive = Math.random() * 100 < rate;   // ← 確率判定
+    $("prompt").classList.remove("silent");
+    if (!survive) {
+      $("face").innerHTML = faceSVG(ch, "angry");
+      $("prompt").textContent = pick(CHARS[ch].roars);
+      $("face").classList.add("boomfx");
+      document.body.classList.add("flash");
+      return later(CONFIG.BOOM_MS, () => die(o, rate));
+    }
+    $("face").innerHTML = faceSVG(ch, "relief");
+    $("prompt").textContent = pick(CHARS[ch].forgive);
+    toast(`回避成功！（生存率${rate}%を突破）`);
+    later(CONFIG.REACT_MS, advance);
+  });
+}
 
-  toast(`回避成功！（生存率${rate}%を突破）`);
+function advance() {
   S.q++;
   const m = MODES[S.mode];
   if (!S.endless && S.q > m.goal) {
@@ -662,8 +714,6 @@ function die(o, rate) {
   const z = load(LS.zukan, {}), key = q.id + ":" + o.idx;
   S.last.isNew = !z[key];
   z[key] = (z[key] || 0) + 1; save(LS.zukan, z);
-  document.body.classList.add("flash");
-  setTimeout(() => document.body.classList.remove("flash"), 260);
   finish(false);
 }
 
