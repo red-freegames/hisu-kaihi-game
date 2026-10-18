@@ -1351,6 +1351,7 @@ body.hell .zk li.new{background:#5a3a00}
 .corner{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);font-size:11px;font-weight:800;pointer-events:none;z-index:5}
 .corner a,.corner span{pointer-events:auto;background:var(--card);border:2px solid #2a1a14;border-radius:99px;padding:3px 10px;text-decoration:none;white-space:nowrap}
 .corner a{background:#ffdd57;color:#2a1a14}
+.corner a.pv{background:none;border:0;color:var(--sub);font-weight:600;font-size:10px;padding:3px 4px;text-decoration:underline}
 /* HOME / モーダル / 実績 */
 .home{flex:none;background:var(--card);border:2px solid #2a1a14;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:900;white-space:nowrap}
 .home:active{transform:translateY(1px)}
@@ -1572,6 +1573,7 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
 <div class="corner">
   <a id="coffee" target="_blank" rel="noopener">開発者にコーヒーを奢る☕</a>
   <span>配信・動画利用大歓迎！商用利用OK</span>
+  <a class="pv" href="https://red-freegames.github.io/privacy.html" target="_blank" rel="noopener">プライバシー</a>
 </div>
 
 <script>
@@ -1589,6 +1591,9 @@ const CONFIG = {
     entry: { game: "entry.2056875219", kind: "entry.1340021649", message: "entry.1317669719", contact: "entry.2028433641", env: "entry.875830690" },
   },
   SHARE_URL: "https://red-freegames.github.io/hisu-kaihi-game/",          // 公開URL（ポストに載るURL）
+  // アクセス解析（Googleアナリティクス4）。測定ID（G-で始まる）を入れると、本番サイトでだけ計測が始まる。
+  // プレイヤーの画面には何も表示しない。名前・連絡先などの個人情報は送らない（モード・問題番号・結果だけ）
+  GA_ID: "G-FC7LD0DJTQ",
   TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
   REACT_MS: 550,                              // 生存時、許しのセリフを見せる長さ
   BOOM_MS: 380,                               // 死亡時、キレ顔＋爆発を見せてからリザルトへ
@@ -1736,11 +1741,28 @@ const charOpen = ch => Object.keys(MODES).some(k => modeChars(MODES[k]).includes
 const visibleQs = () => CONST_QUESTIONS.filter(q => charOpen(q.character));
 const visibleAch = () => ACHIEVEMENTS.filter(a => !a.secret || isUnlocked("ONI"));
 
+/* ===== アクセス解析（画面には何も出さない） ===== */
+// 本番（github.io）で、測定IDが入っている時だけGoogleアナリティクスを読み込む。ローカルやプレビューでは何もしない
+function initAnalytics() {
+  if (!CONFIG.GA_ID || !/\.github\.io$/.test(location.hostname)) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+  gtag("js", new Date());
+  gtag("config", CONFIG.GA_ID, { page_title: "ヒス回避ゲーム" });
+  const s = document.createElement("script");
+  s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(CONFIG.GA_ID);
+  document.head.appendChild(s);
+}
+// ゲーム内の出来事を記録する（失敗しても遊びには影響させない）
+const track = (name, params) => { try { if (window.gtag) gtag("event", name, params || {}); } catch (e) {} };
+const answerType = o => ({ MAIN: "correct", 40: "close", 10: "risky", 0: "ng" })[o.rate];
+
 function start(mode) {
   if (!isUnlocked(mode)) return toast(`🔒 ${MODES[mode].locked}`);
   S.run++; S.mode = mode; S.q = 1; S.endless = false; S.lock = false; S.deck = [];
   closeModals();
   bumpStats(s => { s.plays++; });
+  track("game_start", { mode });
   document.body.classList.toggle("hell", demonOn());
   $("hellban").classList.toggle("on", demonOn());
   next();
@@ -1752,6 +1774,7 @@ function startEX() {
   S.run++; S.endless = true; S.q = MODES[S.mode].goal + 1; S.lock = false;
   closeModals();
   bumpStats(s => { s.exTries++; });
+  track("ex_start", { mode: S.mode });
   document.body.classList.add("hell");
   $("hellban").classList.add("on");
   next();
@@ -1831,6 +1854,7 @@ function advance() {
 function die(o) {
   const q = S.cur;
   S.last = { q, o, reason: o.deathReason, reached: S.q, endless: S.endless, demon: demonOn(), clear: false };
+  track("game_over", { mode: S.mode, stage: S.endless ? "ex" : "main", question: S.q, question_id: q.id, answer_type: answerType(o) });
   bumpStats(s => {
     s.deaths++;
     if (o.rate === "MAIN") s.mainDeaths++;
@@ -1864,6 +1888,7 @@ function finish(clear, legend) {
   if (legend) celebrate();
   if (S.last.firstLegend) { save(LS.reveal, 1); later(1600, openReveal); }   // 紙吹雪のあとに公開。見逃したらタイトルで出す
   if (clear && m.demon) celebrate(["👹", "🔥", "⚡", "👑", "💀", "✨", "🏆"], "oniflash");
+  if (clear) track(legend ? "legend_clear" : "game_clear", { mode: S.mode });
 }
 
 // 「新たな試練」公開モーダル（初の10問完全制覇時に自動表示）
@@ -1871,13 +1896,15 @@ function openReveal() {
   $("revealFace").innerHTML = faceSVG(MODES.ONI.char, "angry", true);
   openModal("revealModal");
   save(LS.reveal, 0);                                  // 一度見せたら出さない
+  track("oni_unlock");
 }
 const revealPending = () => load(LS.reveal, 0) === 1 && isUnlocked("ONI");
 function shareReveal() {
   const text = `【ヒス回避ゲーム】理不尽ヒス10問を完全制覇したら……\n` +
     `封印されていた「新たな試練」が出現した👹⚡\n` +
     `10問完全制覇者にしか見えない最終ステージ。あなたは辿り着けるか？\n` +
-    `#ヒス回避ゲーム #新たな試練 #伝説のヒス回避マスター ${CONFIG.SHARE_URL}`;
+    `#ヒス回避ゲーム #新たな試練 #伝説のヒス回避マスター ${shareLink("reveal")}`;
+  track("share", { kind: "reveal", mode: "HARD" });
   window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank", "noopener");
 }
 
@@ -2033,8 +2060,14 @@ function clearTitle(L) {
 }
 
 // X投稿文（宣伝っぽさゼロの、ツッコミ・自虐・爆笑誘発型）
+// ポストに載せるURL。どのポスト経由の流入かをアクセス解析で見分けるため、UTMパラメータを付ける（Xでは長さに関係なく23文字扱い）
+const shareLink = kind => `${CONFIG.SHARE_URL}?utm_source=x&utm_medium=social&utm_campaign=${kind}`;
+
 function share() {
-  const L = S.last, m = MODES[S.mode], url = CONFIG.SHARE_URL;
+  const L = S.last, m = MODES[S.mode];
+  const kind = L.oni ? "oni_clear" : L.legend ? "legend" : L.clear ? "clear" : "defeat";
+  const url = shareLink(kind);
+  track("share", { kind, mode: S.mode });
   const build = (choice, reason) => {
     if (L.clear) {
       const title = clearTitle(L);
@@ -2162,6 +2195,7 @@ async function sendFeedback(e) {
     // Googleフォームは別オリジンなので no-cors で送る（応答は読めないが、送信自体は受け付けられる）
     await fetch(CONFIG.FEEDBACK.action, { method: "POST", mode: "no-cors", body: feedbackFields(kind, msg, $("fbContact").value.trim()) });
     $("fbResult").textContent = "✅ 送信しました！ありがとうございます。";
+    track("feedback_send", { kind });
     $("fbMsg").value = ""; $("fbContact").value = "";
     updateFeedbackLink();
     setTimeout(() => { $("fbSend").disabled = false; }, 3000);   // 連打防止
@@ -2225,6 +2259,7 @@ document.addEventListener("keydown", e => {
   } else if (e.key === "Escape") renderTitle();
 });
 $("coffee").href = CONFIG.COFFEE_URL;
+initAnalytics();
 renderTitle();
 </script>
 </body>
