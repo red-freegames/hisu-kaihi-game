@@ -337,6 +337,68 @@ const CONST_QUESTIONS = [
       { text: "待って、ごめん。ちゃんと話そう", rate: 40, reaction: "……分かったわよ", deathReason: "引き止めるのが遅い！本当は出ていってほしいんでしょ！" },
       { text: "落ち着いて、ね？", rate: 10, reaction: "……落ち着いてるわよ", deathReason: "落ち着いてるわよ！！落ち着いてないのはそっちでしょ！！" },
       { text: "いってらっしゃい", rate: 0, deathReason: "本当に止めないのね！？" } ] },
+
+  // ───────────── 鬼嫁（鬼モード）：正解は筋が通っているのに、それでも容赦なくキレられる ─────────────
+  { id: "O001", character: "鬼嫁", prompt: "私の誕生日、何くれるつもり？……まさか忘れてないよね？（誕生日は昨日）",
+    options: [
+      { text: "忘れてない。昨日は渡す勇気が出なかった。……遅れてごめん、今渡す", rate: "MAIN", reaction: "……なんで昨日渡さないのよ。……ありがと", deathReason: "勇気ってなに！？私が怖いってこと！？" },
+      { text: "今日が本番だと思ってた！今から一緒に選びに行こう", rate: 40, reaction: "……仕方ないわね。高いやつね", deathReason: "昨日が誕生日だって分かってて言ってるの！？" },
+      { text: "サプライズで来週やる予定だったんだ", rate: 10, reaction: "……来週ね。期待してるから", deathReason: "来週！？誕生日を何だと思ってるの！" },
+      { text: "え、昨日だったっけ？", rate: 0, deathReason: "鬼の誕生日を忘れるとは、いい度胸ね……" } ] },
+  { id: "O002", character: "鬼嫁", prompt: "あんたの母親から電話あったんだけど。私と母親、どっちの味方？",
+    options: [
+      { text: "君の味方。母さんには俺から話す。君に直接は言わせない", rate: "MAIN", reaction: "……ちゃんと言ってよね", deathReason: "あんたが話すと、全部丸く収めて終わりにするでしょ！" },
+      { text: "どっちの味方とかじゃなくて、二人で話し合おう", rate: 40, reaction: "……あんたも同席するならね", deathReason: "私と母親を二人きりにする気！？地獄よ！" },
+      { text: "母さんも悪気はないんだよ", rate: 10, reaction: "……悪気がないのが一番タチ悪いのよ", deathReason: "やっぱり母親の味方なんじゃない！" },
+      { text: "母さんの言うことにも一理あるよ", rate: 0, deathReason: "一理！？その一理で私の人生を削るつもり！？" } ] },
+  { id: "O003", character: "鬼嫁", prompt: "今日、私が何回ため息ついたか数えてた？",
+    options: [
+      { text: "数えてない。でも3回目くらいから、何かあったんだろうなって思ってた", rate: "MAIN", reaction: "……7回よ。聞いてよね", deathReason: "3回目から気付いてて、ずっと黙ってたの！？" },
+      { text: "ごめん、気付いてなかった。何があったの？", rate: 40, reaction: "……ずっと待ってたのよ", deathReason: "7回もついたのに気付かないって、どういう神経！？" },
+      { text: "ため息つくと幸せが逃げるよ", rate: 10, reaction: "……誰のせいよ", deathReason: "幸せならとっくに逃げてるわよ！あんたと結婚した日に！" },
+      { text: "数えてほしかったの？", rate: 0, deathReason: "数えるくらいの関心も持てないの！？" } ] },
+  { id: "O004", character: "鬼嫁", prompt: "この家の家事、あんたどれくらいやってると思う？",
+    options: [
+      { text: "正直、2割もやってない。今日から洗濯と皿洗いは全部やる", rate: "MAIN", reaction: "……やっと気付いたのね。続けなさいよ", deathReason: "2割『も』！？1割もやってないわよ！" },
+      { text: "半分くらいはやってるつもりだけど……", rate: 40, reaction: "……つもり、ね。見てるからね", deathReason: "つもり！？そのつもりの差が戦争を生むのよ！" },
+      { text: "仕事してるから、家のことは任せてるつもり", rate: 10, reaction: "……任された覚えはないけど", deathReason: "私も仕事してるんだけど！？" },
+      { text: "8割はやってるでしょ", rate: 0, deathReason: "8割！？どこの世界線の話！？" } ] },
+  { id: "O005", character: "鬼嫁", prompt: "私が髪切ったの、気付いた？",
+    options: [
+      { text: "気付いてた。前髪、少し短くして顔が明るく見える", rate: "MAIN", reaction: "……へえ、ちゃんと見てるじゃない", deathReason: "『明るく見える』って、前は暗かったってこと！？" },
+      { text: "うん、似合ってるよ！", rate: 40, reaction: "……どこ切ったか分かってる？まあいいわ", deathReason: "どこを切ったか言ってみなさいよ！ほら言えない！" },
+      { text: "あ、ほんとだ。いつ切ったの？", rate: 10, reaction: "……3日前よ", deathReason: "3日前よ！3日間気付かなかったのね！" },
+      { text: "切った？変わってないけど", rate: 0, deathReason: "1cm切ったのよ！？1cmの愛情もないわけ！？" } ] },
+  { id: "O006", character: "鬼嫁", prompt: "なんでスマホ伏せて置いてるの？見られたらマズいものでもあるの？",
+    options: [
+      { text: "ないよ。見たいなら見ていい。（ロックを解除して渡す）", rate: "MAIN", reaction: "……別に見ないわよ。でも、ならいいわ", deathReason: "そんなにあっさり渡すなんて、消した後なんでしょ！" },
+      { text: "画面が光るのが嫌で、いつも伏せてるだけだよ", rate: 40, reaction: "……ふーん。まあいいわ", deathReason: "『いつも』って、いつも何か隠してるってことね！" },
+      { text: "疑うなんてひどいな", rate: 10, reaction: "……疑わせるようなことしないで", deathReason: "ひどいのはどっちよ！疑わせる方が悪いの！" },
+      { text: "プライバシーってものがあるでしょ", rate: 0, deathReason: "夫婦にプライバシーなんかないのよ！！" } ] },
+  { id: "O007", character: "鬼嫁", prompt: "疲れた。……で、あんたは今日何してたの？",
+    options: [
+      { text: "君ほどじゃないけど働いてた。今日は晩ご飯作るから、座ってて", rate: "MAIN", reaction: "……じゃあお願い。辛くしないでね", deathReason: "『君ほどじゃないけど』って、私の疲れをナメてるの！？" },
+      { text: "俺も疲れたよ……今日大変でさ", rate: 40, reaction: "……あんたも大変だったのね", deathReason: "疲れ自慢してくるんじゃないわよ！先に私をねぎらいなさい！" },
+      { text: "お疲れさま！何かあった？", rate: 10, reaction: "……ちょっと聞いてくれる？", deathReason: "何かあったかって、あんたのせいで疲れてるのよ！" },
+      { text: "ゲームしてた", rate: 0, deathReason: "正直に言えば許されると思ってるの！？" } ] },
+  { id: "O008", character: "鬼嫁", prompt: "結婚記念日のディナー、なんでこの店にしたの？",
+    options: [
+      { text: "プロポーズした店だから。あの時と同じ窓際の席を取った", rate: "MAIN", reaction: "……覚えてたのね。……ずるい", deathReason: "窓際って外から丸見えじゃない！泣いてるとこ見られたらどうするの！" },
+      { text: "口コミで評判がよかったから", rate: 40, reaction: "……まあ、美味しいなら許す", deathReason: "記念日を口コミで決めたの！？私たちの思い出は！？" },
+      { text: "君が前に行きたいって言ってたから", rate: 10, reaction: "……言ったっけ。まあいいわ", deathReason: "それ言ったの、テレビで見た別の店の話よ！" },
+      { text: "予約が取れたのがここだけだった", rate: 0, deathReason: "妥協！？結婚記念日を妥協で済ませたの！？" } ] },
+  { id: "O009", character: "鬼嫁", prompt: "私、太った？……正直に言って。怒らないから",
+    options: [
+      { text: "俺は気にならない。君が気になるなら、一緒に歩く時間を作ろう", rate: "MAIN", reaction: "……じゃあ明日から一緒ね", deathReason: "『俺は気にならない』って、他の人は気にするってこと！？" },
+      { text: "全然太ってないよ", rate: 40, reaction: "……ほんと？信じるからね", deathReason: "正直に言ってって言ったでしょ！？嘘つき！" },
+      { text: "ちょっとだけ、ふっくらしたかも", rate: 10, reaction: "……やっぱり。言ってくれてありがと", deathReason: "怒らないって言ったけど、限度ってものがあるのよ！！" },
+      { text: "うん、太った", rate: 0, deathReason: "『怒らないから』を信じる人、初めて見たわ……" } ] },
+  { id: "O010", character: "鬼嫁", prompt: "私が出て行ったら、あんたどうするの？",
+    options: [
+      { text: "追いかける。だから出て行く前に、何が嫌か教えて。直すから", rate: "MAIN", reaction: "……そこまで言うなら、話してあげる", deathReason: "追いかけるって何！？怖いのよ！" },
+      { text: "困る。君がいないと何もできないから", rate: 40, reaction: "……ほんと、何もできないものね", deathReason: "家政婦がいなくなるのが困るだけでしょ！" },
+      { text: "そんなこと考えたくないよ", rate: 10, reaction: "……考えなさいよ、少しは", deathReason: "考えたくないって、現実から逃げてるだけじゃない！" },
+      { text: "実家に帰るの？駅まで送ろうか？", rate: 0, deathReason: "送るな！！引き止めなさいよ！！" } ] },
 ];
 </script>
 <style>
@@ -432,7 +494,7 @@ body.hell .zk li.new{background:#5a3a00}
 .statsBtn small{font-size:11px;color:var(--sub);font-weight:800}
 .titleBtns{margin:4px 0 6px}
 .zksum{font-size:12px;color:var(--sub);font-weight:700}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:6px}
 .tab{background:var(--card);border:2px solid #2a1a14;border-radius:10px;padding:5px 2px;font-size:12px;font-weight:900;line-height:1.3}
 .tab small{display:block;font-size:10px;color:var(--sub)}
 .tab.on{background:#2a1a14;color:#fff}.tab.on small{color:#ddd}
@@ -488,6 +550,17 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
 .goldflash{animation:gf 1s}
 @keyframes gf{0%{background:#fff7c2}30%{background:#ffd93b}100%{background:var(--bg)}}
 @media (prefers-reduced-motion:reduce){.lamp,body.hell .hellban,body.hell #game .face,.big.ex,.goldbadge{animation:none}.confetti{display:none}}
+/* 鬼モード：タイトルのボタン・ロック表示・制覇画面 */
+.lv.o{background:#000;color:#ffde00;box-shadow:0 0 0 2px #e8262b}
+.diff.oni{background:linear-gradient(135deg,#2c0d10,#1a0508);color:#ffe9e4;border-color:#000}
+.diff.oni small{color:#d79a8f}
+.diff.locked{opacity:.6;filter:grayscale(.8);border-style:dashed}
+.diff .lockico{width:62px;height:62px;flex:none;display:grid;place-items:center;font-size:34px}
+.boom.onic{background:linear-gradient(160deg,#000 0%,#3a0a0e 60%,#7a0d0d 100%);color:#ffe9e4;border-color:#ffde00;box-shadow:0 0 0 4px #e8262b inset,0 0 26px rgba(232,38,43,.7)}
+.boom.onic h2{font-size:30px;margin-top:8px;color:#ffde00;text-shadow:0 0 12px #e8262b}
+.goldbadge.oni{background:linear-gradient(#3a0a0e,#000);color:#ffde00;border-color:#ffde00;box-shadow:0 0 0 4px #e8262b,0 0 22px rgba(255,222,0,.6)}
+.oniflash{animation:of 1.1s}
+@keyframes of{0%{background:#ff1a1a}35%{background:#ffde00}100%{background:var(--bg)}}
 .flash{animation:fl .35s}
 .opts.locked .opt{pointer-events:none;opacity:.4;box-shadow:0 4px 0 #2a1a14}
 .opts.locked .opt.picked{opacity:1;background:#ffde00;color:#2a1a14;transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
@@ -598,6 +671,10 @@ const MODES = {
   EASY:   { char: "クレーマー", goal: 5, rates: { MAIN: 100, 40: 0,  10: 0,  0: 0 }, label: "EASY",   cls: "e", title: "激怒するクレーマー客", hint: "運要素なし。誠意ある対応を選べば必ず回避できる" },
   NORMAL: { char: "彼女",       goal: 7, rates: { MAIN: 93,  40: 30, 10: 10, 0: 0 }, label: "NORMAL", cls: "n", title: "メンヘラ気味の彼女", hint: "文脈を読めば回避できる。……ただし、ごくまれに" },
   HARD:   { char: "母親",       goal: 7, rates: { MAIN: 75,  40: 40, 10: 10, 0: 0 }, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true, hint: "正解でも4回に1回は理不尽にキレられる" },
+  ONI:    { char: "鬼嫁",       goal: 7, rates: { MAIN: 65,  40: 20, 10: 5,  0: 0 }, label: "鬼モード", cls: "o", title: "容赦なき鬼嫁", demon: true,
+            hint: "1問目から悪魔化。正解でも3回に1回はキレられる", locked: "HARDクリアで解放",
+            unlocked: s => (s.clears.HARD || 0) > 0 || s.legend > 0,
+            lines: ["👹 鬼モード開幕。一切の容赦なし", "⚠ 正解すら疑え", "⚠ 鬼の機嫌は秒で変わる", "⚠ まだ折り返し。気を抜くな", "⚠ 呼吸音すら地雷", "⚠ あと2問。指が震える", "⚠ 最終問題。鬼神まで、あと1問"] },
 };
 const CHARS = {
   "クレーマー": {
@@ -606,6 +683,8 @@ const CHARS = {
                   moods: ["前髪が決まらなかった", "友達の惚気話を聞いた直後", "生理前", "インスタのいいねが少なかった", "推しが熱愛報道された"] },
   "母親":       {
                   moods: ["PTAの会合帰り", "体重計に乗った直後", "ワイドショーで嫌なニュースを見た", "特売の卵が売り切れだった", "お父さんが靴下を脱ぎっぱなし"] },
+  "鬼嫁":       {
+                  moods: ["夫の母親から電話があった", "結婚式の写真を見返していた", "夫の靴下が裏返しで洗濯機に入っていた", "ママ友のSNSを見た直後", "3日前のことをまだ思い出している"] },
 };
 // 選んだ選択肢の「正体」（数値は一切出さず、言葉だけで明かす）
 const VERDICT = {
@@ -669,6 +748,9 @@ function faceSVG(ch, mood, demon) {
   } else if (ch === "彼女") {
     back = '<path d="M18 60 Q14 16 60 14 Q106 16 102 60 L106 110 L84 110 L84 60 L36 60 L36 110 L14 110Z" fill="#8a4b3a"/>';
     front = '<path d="M26 50 Q30 18 60 18 Q90 18 94 50 Q80 34 62 40 Q48 30 26 50Z" fill="#8a4b3a"/><path d="M78 18 l14 -8 l2 14 Z M78 18 l-2 -14 l14 8Z" fill="#ff6fa8"/><circle cx="36" cy="74" r="6" fill="#ff9aa8" opacity=".6"/><circle cx="84" cy="74" r="6" fill="#ff9aa8" opacity=".6"/>';
+  } else if (ch === "鬼嫁") {
+    back = '<path d="M16 62 Q12 14 60 12 Q108 14 104 62 L108 118 L86 118 L86 60 L34 60 L34 118 L12 118Z" fill="#15090a"/>';
+    front = '<path d="M24 52 Q26 16 60 16 Q94 16 96 52 Q92 30 74 28 L60 40 L46 28 Q28 30 24 52Z" fill="#15090a"/><path d="M84 22 l10 -4 l-2 10Z" fill="#e8262b"/><path d="M42 106 Q60 116 78 106 L82 124 L38 124Z" fill="#7a0d0d"/>';
   } else {
     back = '<circle cx="60" cy="14" r="13" fill="#5a3a2e"/>';
     front = '<path d="M24 52 Q22 22 60 22 Q98 22 96 52 Q88 36 60 34 Q32 36 24 52Z" fill="#5a3a2e"/><g fill="none" stroke="#2a1a14" stroke-width="3"><circle cx="45" cy="62" r="10"/><circle cx="75" cy="62" r="10"/><path d="M55 62 L65 62"/></g><path d="M40 104 Q60 114 80 104 L84 124 L36 124Z" fill="#f4a3b5"/>';
@@ -694,22 +776,29 @@ function renderTitle() {
   S.run++;
   closeModals();
   const best = load(LS.best, {});
-  $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => `
-    <button class="diff" data-mode="${k}">${faceSVG(m.char, false)}
+  $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => isUnlocked(k) ? `
+    <button class="diff${m.demon ? " oni" : ""}" data-mode="${k}">${faceSVG(m.char, false, m.demon)}
       <div><span class="lv ${m.cls}">${m.label}</span><b>${m.title}</b>
-      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しEXステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}</small></div></button>`).join("");
+      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しEXステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}${m.demon && oniTitle() ? `／称号『${oniTitle().name}』` : ""}</small></div></button>` : `
+    <button class="diff locked" data-mode="${k}"><span class="lockico">🔒</span>
+      <div><span class="lv ${m.cls}">${m.label}</span><b>？？？</b><small>${m.locked}</small></div></button>`).join("");
   const z = load(LS.zukan, {});
   $("zkTitle").textContent = `${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除`;
   document.body.classList.remove("hell");
   show("title");
 }
 
+// 悪魔化グラフィック・ダークUIを使う状態か（HARDの隠しEXステージ中、または demon モード＝鬼モード）
+const demonOn = () => S.endless || !!(MODES[S.mode] && MODES[S.mode].demon);
+const isUnlocked = k => !MODES[k].unlocked || MODES[k].unlocked(loadStats());
+
 function start(mode) {
+  if (!isUnlocked(mode)) return toast(`🔒 ${MODES[mode].locked}`);
   S.run++; S.mode = mode; S.q = 1; S.endless = false; S.lock = false; S.deck = [];
   closeModals();
   bumpStats(s => { s.plays++; });
-  document.body.classList.remove("hell");
-  $("hellban").classList.remove("on");
+  document.body.classList.toggle("hell", demonOn());
+  $("hellban").classList.toggle("on", demonOn());
   next();
   show("game");
 }
@@ -737,16 +826,17 @@ function next() {
   const q = S.cur = S.deck.pop();
   S.shown = shuffle(q.options.map((o, i) => ({ ...o, idx: i })));
   const exN = CONFIG.EX_GOAL - m.goal, exI = S.q - m.goal - 1;
-  $("stage").textContent = S.endless ? "🔥 隠しEXステージ" : `${m.label}：${m.title}`;
+  $("stage").textContent = S.endless ? "🔥 隠しEXステージ" : m.demon ? `👹 ${m.label}：${m.title}` : `${m.label}：${m.title}`;
   $("qn").textContent = S.endless ? `${S.q} / ${CONFIG.EX_GOAL}` : `${S.q} / ${m.goal}`;
   $("bar").style.width = (S.endless ? exI / exN : (S.q - 1) / m.goal) * 100 + "%";
   if (S.endless) $("hellban").textContent = CONFIG.EX_LINES[Math.min(exI, CONFIG.EX_LINES.length - 1)];
-  $("face").innerHTML = faceSVG(q.character, "normal", S.endless);
+  else if (m.demon) $("hellban").textContent = m.lines[Math.min(S.q - 1, m.lines.length - 1)];
+  $("face").innerHTML = faceSVG(q.character, "normal", demonOn());
   $("face").classList.remove("boomfx");
   $("opts").classList.remove("locked");
   document.body.classList.remove("flash");
   $("prompt").textContent = q.prompt;
-  $("who").textContent = "▲ " + (S.endless ? `悪魔化した${q.character} 👿⚡` : m.title);
+  $("who").textContent = "▲ " + (m.demon ? `${m.title} 👿⚡` : demonOn() ? `悪魔化した${q.character} 👿⚡` : m.title);
   const bp = 120 + ((Math.random() * 80) | 0);
   $("mood").innerHTML = `現在の機嫌：<b>血圧${bp}</b>／直前の出来事：${esc(pick(CHARS[q.character].moods.concat(COMMON_MOODS)))}`;
   $("opts").innerHTML = S.shown.map((o, i) => `<button class="opt" data-i="${i}"><span class="k">${"ABCD"[i]}</span><span>${esc(o.text)}</span></button>`).join("");
@@ -763,7 +853,7 @@ function choose(i) {
   // 1) 選択中表示＋全ロック → 2) 相手が黙り込む（タメ）
   $("opts").classList.add("locked");
   $("opts").children[i].classList.add("picked");
-  $("face").innerHTML = faceSVG(ch, "silent", S.endless);
+  $("face").innerHTML = faceSVG(ch, "silent", demonOn());
   $("prompt").textContent = "……";
   $("prompt").classList.add("silent");
   // 3) タメの後に確率判定
@@ -772,13 +862,13 @@ function choose(i) {
     const survive = Math.random() * 100 < rate;   // ← 確率判定
     $("prompt").classList.remove("silent");
     if (!survive) {
-      $("face").innerHTML = faceSVG(ch, "angry", S.endless);
+      $("face").innerHTML = faceSVG(ch, "angry", demonOn());
       $("prompt").textContent = o.deathReason;      // この選択肢専用のキレ理由
       $("face").classList.add("boomfx");
       document.body.classList.add("flash");
       return later(CONFIG.BOOM_MS, () => die(o));
     }
-    $("face").innerHTML = faceSVG(ch, "relief", S.endless);
+    $("face").innerHTML = faceSVG(ch, "relief", demonOn());
     $("prompt").textContent = o.reaction || "……";  // この選択肢専用の返答
     toast("回避成功！");
     bumpStats(s => { s.survived++; });
@@ -796,7 +886,7 @@ function advance() {
 
 function die(o) {
   const q = S.cur;
-  S.last = { q, o, reason: o.deathReason, reached: S.q, endless: S.endless, clear: false };
+  S.last = { q, o, reason: o.deathReason, reached: S.q, endless: S.endless, demon: demonOn(), clear: false };
   bumpStats(s => {
     s.deaths++;
     if (o.rate === "MAIN") s.mainDeaths++;
@@ -813,9 +903,12 @@ function die(o) {
 function finish(clear, legend) {
   const m = MODES[S.mode];
   if (clear) {
+    const firstHard = S.mode === "HARD" && !legend && !(loadStats().clears.HARD > 0);
     S.last = { clear: true, legend: !!legend, reached: legend ? CONFIG.EX_GOAL : m.goal, endless: !!legend,
-               exReady: !legend && !!m.endless };   // HARDクリア直後はEXへの挑戦ボタンを出す
+               exReady: !legend && !!m.endless,      // HARDクリア直後はEXへの挑戦ボタンを出す
+               oni: !!m.demon, firstHard };
     bumpStats(s => { if (legend) s.legend++; else s.clears[S.mode] = (s.clears[S.mode] || 0) + 1; });
+    if (m.demon) { S.last.title = oniTitle(); S.last.nextTitle = oniNextTitle(); S.last.newTitle = S.last.title && loadStats().clears.ONI === S.last.title.n; }
   }
   const best = load(LS.best, {});
   const isBest = S.last.reached > (best[S.mode] || 0);
@@ -825,14 +918,23 @@ function finish(clear, legend) {
   S.resultAt = Date.now();
   show("result");
   if (legend) celebrate();
+  if (clear && m.demon) celebrate(["👹", "🔥", "⚡", "👑", "💀", "✨", "🏆"], "oniflash");
 }
 
-// 伝説達成：金色フラッシュ＋紙吹雪（軽量なDOM絵文字。数秒で自動で消える）
-function celebrate() {
-  document.body.classList.remove("goldflash"); void document.body.offsetWidth; document.body.classList.add("goldflash");
+// 鬼モードの称号（クリア回数で昇格）。ここに足せば称号を増やせる
+const ONI_TITLES = [
+  { n: 1, name: "鬼神回避",       desc: "鬼モードを初クリア" },
+  { n: 3, name: "修羅の交際者",   desc: "鬼モードを3回クリア" },
+  { n: 5, name: "理不尽の支配者", desc: "鬼モードを5回クリア" },
+];
+const oniTitle = () => { const c = loadStats().clears.ONI || 0; return ONI_TITLES.filter(t => c >= t.n).pop() || null; };
+const oniNextTitle = () => { const c = loadStats().clears.ONI || 0; const t = ONI_TITLES.find(t => c < t.n); return t ? { ...t, left: t.n - c } : null; };
+
+// 伝説・鬼モード制覇：フラッシュ＋紙吹雪（軽量なDOM絵文字。数秒で自動で消える）
+function celebrate(pieces = ["🎉", "🎊", "👑", "✨", "🏆", "💛", "⭐"], flash = "goldflash") {
+  ["goldflash", "oniflash"].forEach(c => document.body.classList.remove(c)); void document.body.offsetWidth; document.body.classList.add(flash);
   const box = document.createElement("div");
   box.className = "confetti";
-  const pieces = ["🎉", "🎊", "👑", "✨", "🏆", "💛", "⭐"];
   for (let i = 0; i < 60; i++) {
     const p = document.createElement("i");
     p.textContent = pieces[i % pieces.length];
@@ -855,6 +957,12 @@ function renderResult(isBest) {
       <h2>${CONFIG.EX_GOAL}問完全制覇！</h2><div class="face">${faceSVG(char, "relief")}</div>
       <div class="roar">生存率約3.6%の奇跡を達成！</div>
       <div class="prob">あなたは理不尽の頂点を極めました。</div>`;
+  } else if (L.oni) {
+    $("boom").className = "boom onic";
+    $("boom").innerHTML = `<div class="goldbadge oni">👹 称号『${esc(L.title.name)}』${L.newTitle ? " 獲得！" : ""}</div>
+      <h2>鬼モード制覇！</h2><div class="face">${faceSVG(char, "relief", true)}</div>
+      <div class="roar">${esc(m.title)}の理不尽${m.goal}問を、すべて回避した。</div>
+      <div class="prob">正解ですらキレられる地獄を越えた者だけが、この称号を名乗れる。</div>`;
   } else if (L.exReady) {
     $("boom").className = "boom clear";
     $("boom").innerHTML = `<h2>🎉 ${m.label}モード クリア！</h2><div class="face">${faceSVG(char, false)}</div>
@@ -869,7 +977,7 @@ function renderResult(isBest) {
     const ng = L.o.rate === 0, main = L.o.rate === "MAIN", escape = L.reason === ESCAPE_NG;
     $("boom").className = "boom" + (ng ? " ng" : "");
     $("boom").innerHTML = `<h2>${escape ? "【絶対NG！】<br>うやむやに逃げた！" : ng ? "【絶対NG！】<br>ありえない選択肢！" : main ? "💥 正解なのに爆死！" : "💥 爆死！"}</h2>
-      <div class="face">${faceSVG(char, "angry", L.endless)}</div>
+      <div class="face">${faceSVG(char, "angry", L.demon)}</div>
       <div class="roar">「${esc(L.reason)}」</div>
       <div class="prob">${VERDICT[L.o.rate].note}</div>`;
   }
@@ -879,23 +987,31 @@ function renderResult(isBest) {
 
   if (L.legend) {
     $("cause").innerHTML = `<div class="h">👑 結果</div>${esc(m.title)}を${m.goal}問、さらに悪魔化した${esc(m.char)}を${CONFIG.EX_GOAL - m.goal}問、すべて回避した。この記録は誇っていい。`;
+  } else if (L.oni) {
+    $("cause").innerHTML = `<div class="h">👹 結果</div>鬼モード通算${loadStats().clears.ONI}回目の制覇。` +
+      (L.nextTitle ? `<br>あと${L.nextTitle.left}回の制覇で、称号『${esc(L.nextTitle.name)}』に昇格。` : "<br>すべての鬼の称号を手にした。あなたこそ理不尽の頂点。");
   } else if (L.exReady) {
-    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。`;
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。` +
+      (L.firstHard ? "<br><b>👹 新モード「鬼モード」が解放されました！</b>" : "");
   } else if (L.clear) {
     $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！次はさらに理不尽な相手が待っている……`;
   } else {
-    $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しEXステージ・" : ""}${L.reached}問目）</div>
+    $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しEXステージ・" : MODES[S.mode].demon ? "鬼モード・" : ""}${L.reached}問目）</div>
       vs ${esc(L.q.character)}「${esc(L.q.prompt)}」<br>
       あなた：<q>${esc(L.o.text)}</q><br>→ キレ理由：「${esc(L.reason)}」`;
   }
-  $("nextBtn").style.display = S.mode === "HARD" ? "none" : "";
-  $("nextBtn").textContent = S.mode === "EASY" ? "NORMALへ" : "HARDへ";
+  const order = Object.keys(MODES), nextMode = order[order.indexOf(S.mode) + 1];
+  const showNext = nextMode && isUnlocked(nextMode);
+  $("nextBtn").style.display = showNext ? "" : "none";
+  $("nextBtn").textContent = showNext ? (MODES[nextMode].demon ? "👹 " : "") + MODES[nextMode].label + "へ" : "";
+  $("nextBtn").dataset.mode = nextMode || "";
   $("exBtn").style.display = L.exReady ? "" : "none";
-  $("shareBtn").className = "big " + (L.legend ? "gold" : "x");
-  $("shareBtn").style.order = L.legend ? -1 : 0;           // 伝説達成時は記念ポストを一番上に
-  $("shareBtn").textContent = L.legend ? `🏆 ${CONFIG.EX_GOAL}問完全制覇記念ポスト（X共有）` : "𝕏 記録をポストする";
-  // HARDクリア直後と伝説達成時は、誤タップで挑戦権・余韻を失わないよう「どこでもタップでリトライ」を止める
-  const tapRetry = !(L.exReady || L.legend);
+  const special = L.legend || L.oni;                         // 伝説・鬼モード制覇は記念ポストを金色で一番上に
+  $("shareBtn").className = "big " + (special ? "gold" : "x");
+  $("shareBtn").style.order = special ? -1 : 0;
+  $("shareBtn").textContent = L.legend ? `🏆 ${CONFIG.EX_GOAL}問完全制覇記念ポスト（X共有）` : L.oni ? `👹 鬼モード制覇＆称号『${L.title.name}』をポスト` : "𝕏 記録をポストする";
+  // HARDクリア直後・伝説達成・鬼モード制覇は、誤タップで挑戦権・余韻を失わないよう「どこでもタップでリトライ」を止める
+  const tapRetry = !(L.exReady || special);
   $("result").classList.toggle("tapretry", tapRetry);
   $("retryHint").textContent = tapRetry ? "▶ 画面タップ / Enter で即リトライ" : "▼ ボタンを選んでください";
   renderZukan(L.clear ? null : L.q.id + ":" + L.o.idx);
@@ -935,6 +1051,9 @@ function openZukan(ch) {
 function share() {
   const L = S.last;
   const build = r => {
+    if (L.oni) return `【ヒス回避ゲーム】👹鬼モード制覇！！称号『${L.title.name}』獲得！\n` +
+      `容赦なき鬼嫁の理不尽${MODES[S.mode].goal}問を完全回避した。\n` +
+      `正解ですら3回に1回キレられる地獄、あなたは越えられるか？\n#ヒス回避ゲーム #鬼モード #${L.title.name} ${CONFIG.SHARE_URL}`;
     if (L.legend) return `【ヒス回避ゲーム】👑伝説のヒス回避マスター達成！！\n` +
       `理不尽ヒス${CONFIG.EX_GOAL}問を完全制覇。生存率約3.6%の奇跡を起こした！\n` +
       `あなたは理不尽の頂点を極められるか？\n#ヒス回避ゲーム #対ヒス訓練 #伝説のヒス回避マスター ${CONFIG.SHARE_URL}`;
@@ -971,6 +1090,8 @@ const ACHIEVEMENTS = [
   { icon: "🔥", name: "裏ステージの扉",     desc: "HARDをクリアして隠しEXステージに挑む",  ok: (s) => s.exTries >= 1 },
   { icon: "👹", name: "地獄の底を見た",     desc: "隠しEXステージの最終問（10問目）に到達", ok: (s, b) => (b.HARD || 0) >= 10 },
   { icon: "👑", name: "伝説のヒス回避マスター", desc: "隠しEXステージまで10問完全制覇",       ok: (s) => s.legend >= 1 },
+  { icon: "🗝", name: "鬼の封印を解く",     desc: "鬼モードを解放する（HARDクリア）",        ok: (s) => (s.clears.HARD || 0) > 0 || s.legend > 0 },
+  ...ONI_TITLES.map((t, i) => ({ icon: ["👹", "⚔", "😈"][i] || "👹", name: t.name, desc: t.desc, ok: (s) => (s.clears.ONI || 0) >= t.n })),
   { icon: "🤯", name: "理不尽の洗礼",       desc: "正解を選んだのに爆死する",                 ok: (s) => s.mainDeaths >= 1 },
   { icon: "💣", name: "地雷を踏み抜いた",   desc: "絶対NGを選んで爆死する",                   ok: (s) => s.ngDeaths >= 1 },
   { icon: "🏃", name: "逃げは許されない",   desc: "「確認してまいります」で爆死する",         ok: (s) => s.escapeDeaths >= 1 },
@@ -987,9 +1108,10 @@ function renderStats() {
   const got = ACHIEVEMENTS.filter(a => a.ok(s, b, zr)).length;
   $("statsBody").innerHTML = `
     <div class="sec"><h3>クリア状況</h3><div class="clr">${Object.entries(MODES).map(([k, m]) => {
-      const cleared = (s.clears[k] || 0) > 0;
-      return `<div><span class="lv ${m.cls}">${m.label}</span><span>${esc(m.title)}<br><small>ベスト：${b[k] ? b[k] + "問目" : "—"}${m.endless && (b[k] || 0) > m.goal ? "（隠しEXステージ）" : ""}</small></span>
-        <b class="${cleared ? "ok" : "no"}">${m.endless && s.legend ? "👑 完全制覇" : cleared ? "CLEAR!" : "未クリア"}</b></div>`;
+      const cleared = (s.clears[k] || 0) > 0, open = isUnlocked(k);
+      const status = !open ? "🔒 未解放" : m.endless && s.legend ? "👑 完全制覇" : m.demon && oniTitle() ? `👹 ${oniTitle().name}` : cleared ? "CLEAR!" : "未クリア";
+      return `<div><span class="lv ${m.cls}">${m.label}</span><span>${open ? esc(m.title) : "？？？"}<br><small>${open ? `ベスト：${b[k] ? b[k] + "問目" : "—"}${m.endless && (b[k] || 0) > m.goal ? "（隠しEXステージ）" : ""}${m.demon ? `／制覇${s.clears[k] || 0}回` : ""}` : esc(m.locked)}</small></span>
+        <b class="${cleared && open ? "ok" : "no"}">${status}</b></div>`;
     }).join("")}</div></div>
     <div class="sec"><h3>プレイデータ</h3><div class="nums">
       <div><b>${s.plays}</b><small>プレイ回数</small></div>
@@ -1035,7 +1157,7 @@ $("result").addEventListener("click", e => {
   if (act === "retry") start(S.mode);
   else if (act === "share") share();
   else if (act === "title") renderTitle();
-  else if (act === "next") start(S.mode === "EASY" ? "NORMAL" : "HARD");
+  else if (act === "next") start(b.dataset.mode);
   else if (act === "ex") startEX();
 });
 document.addEventListener("keydown", e => {
