@@ -466,6 +466,7 @@ body.hell .opt .k{background:var(--red)}
 .cause{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
 .cause .h{font-size:11px;color:var(--sub);font-weight:800}
 .cause q{font-weight:800}
+.cause .ttl{display:inline-block;margin-top:6px;font-weight:900;color:var(--red)}
 .badge{flex:none;display:inline-block;font-size:10.5px;font-weight:900;color:#fff;border-radius:6px;padding:1px 6px;text-align:center}
 .r0{background:#000}.r10{background:#9b1c1c}.r40{background:#e07a00}.rMAIN{background:var(--ok)}
 .btns{display:grid;gap:8px;margin-bottom:10px}
@@ -1027,14 +1028,14 @@ function renderResult(isBest) {
     $("cause").innerHTML = `<div class="h">👹 結果</div>鬼モード通算${loadStats().clears.ONI}回目の制覇。` +
       (L.nextTitle ? `<br>あと${L.nextTitle.left}回の制覇で、称号『${esc(L.nextTitle.name)}』に昇格。` : "<br>すべての鬼の称号を手にした。あなたこそ理不尽の頂点。");
   } else if (L.exReady) {
-    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。` +
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。<br><span class="ttl">🏷 獲得称号：【${esc(clearTitle(L))}】</span>` +
       "";
   } else if (L.clear) {
-    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！次はさらに理不尽な相手が待っている……`;
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！次はさらに理不尽な相手が待っている……<br><span class="ttl">🏷 獲得称号：【${esc(clearTitle(L))}】</span>`;
   } else {
     $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しEXステージ・" : MODES[S.mode].demon ? "鬼モード・" : ""}${L.reached}問目）</div>
       vs ${esc(L.q.character)}「${esc(L.q.prompt)}」<br>
-      あなた：<q>${esc(L.o.text)}</q><br>→ キレ理由：「${esc(L.reason)}」`;
+      あなた：<q>${esc(L.o.text)}</q><br>→ キレ理由：「${esc(L.reason)}」<br><span class="ttl">🏷 獲得称号：【${esc(deathTitle(L))}】</span>`;
   }
   const order = Object.keys(MODES), nextMode = order[order.indexOf(S.mode) + 1];
   const showNext = nextMode && isUnlocked(nextMode);
@@ -1084,28 +1085,48 @@ function openZukan(ch) {
   openModal("zukanModal");
 }
 
+/* ===== 称号（シェア文面とリザルト画面で共通） ===== */
+// 負けた時の称号：死に方で決まる（上から順に判定）
+function deathTitle(L) {
+  if (MODES[S.mode].demon) return "鬼に喰われた者";
+  if (L.endless) return "地獄の門で散った者";
+  if (L.reason === ESCAPE_NG) return "逃げ腰の新人店員";
+  if (L.reached === 1) return "開幕即死の伝説";
+  return { MAIN: "正解したのに怒られた人", 40: "あと一歩で許された人", 10: "危ない橋を渡りきれなかった人", 0: "地雷を踏み抜く者" }[L.o.rate];
+}
+// クリアした時の称号
+const CLEAR_TITLES = { EASY: "クレーマー撃退", NORMAL: "彼女の機嫌マスター", HARD: "母の壁を越えし者" };
+function clearTitle(L) {
+  if (L.oni) return L.title.name;
+  if (L.legend) return "伝説のヒス回避マスター";
+  return CLEAR_TITLES[S.mode] || "訓練修了者";
+}
+
+// X投稿文（宣伝っぽさゼロの、ツッコミ・自虐・爆笑誘発型）
 function share() {
-  const L = S.last;
-  const build = r => {
-    if (L.oni) return `【ヒス回避ゲーム】👹鬼モード制覇！！称号『${L.title.name}』獲得！\n` +
-      `容赦なき鬼嫁の理不尽${MODES[S.mode].goal}問を完全回避した。\n` +
-      `正解ですら3回に1回キレられる地獄、あなたは越えられるか？\n#ヒス回避ゲーム #鬼モード #${L.title.name} ${CONFIG.SHARE_URL}`;
-    if (L.legend) return `【ヒス回避ゲーム】👑伝説のヒス回避マスター達成！！\n` +
-      `理不尽ヒス${CONFIG.EX_GOAL}問を完全制覇。生存率約3.6%の奇跡を起こした！\n` +
-      `あなたは理不尽の頂点を極められるか？\n#ヒス回避ゲーム #対ヒス訓練 #伝説のヒス回避マスター ${CONFIG.SHARE_URL}`;
-    let cause;
-    if (L.clear) cause = `敗因なし！${MODES[S.mode].title}の訓練を完了`;
-    else if (L.o.rate === 0) cause = `絶対NG「${L.o.text}」を選んで即爆死（学習不足）`;
-    else if (L.o.rate === "MAIN") cause = `正解を選んだのに「${r}」とキレられた（理不尽）`;
-    else cause = `「${r}」とキレられて爆死`;
-    return `【ヒス回避ゲーム】対ヒス訓練で『${L.reached}問目』まで生き残った！！\n` +
-      `👉 記録：【${L.reached}問目】到達${L.endless ? "（隠しEXステージ突入！）" : `（${MODES[S.mode].label}）`}\n` +
-      `💀 最後の敗因：『${cause}』\n${CONFIG.HASHTAGS} ${CONFIG.SHARE_URL}`;
+  const L = S.last, m = MODES[S.mode], url = CONFIG.SHARE_URL;
+  const build = (choice, reason) => {
+    if (L.clear) {
+      const title = clearTitle(L);
+      if (L.oni || L.legend || S.mode === "HARD") {
+        const stage = L.oni ? m.label : L.legend ? `${m.label}＋隠しEXステージ${CONFIG.EX_GOAL}問` : m.label;
+        return `生存率数%の地獄をくぐり抜けて【${stage}】を完全クリア！！\n` +
+          `称号【${title}】を獲得した！全人類これ回避できる？？\n\n#ヒス回避ゲーム #神回避\n${url}`;
+      }
+      return `【${m.label}】を完全クリア！\n称号【${title}】を獲得。次はもっと理不尽なやつが来るらしい……\n\n#ヒス回避ゲーム #神回避\n${url}`;
+    }
+    const where = L.endless ? "隠しEX・" : m.demon ? "鬼モード・" : `${m.label}・`;
+    return `【敗因：${where}${L.reached}問目】\n` +
+      `『${choice}』って答えたら、『${reason}』ってキレられて爆死したんだがwwww\n` +
+      `【${deathTitle(L)}】獲得。さすがに理不尽すぎて草。\n\n#ヒス回避ゲーム #理不尽ゲー\n${url}`;
   };
-  // Xの文字数上限（全角2・URL23換算で280）に収まるよう、キレ理由だけを末尾から詰める
-  const weight = t => [...t.replace(CONFIG.SHARE_URL, "")].reduce((a, c) => a + (c.charCodeAt(0) > 0x10ff ? 2 : 1), 0) + 23;
-  let r = L.reason || "", text = build(r);
-  while (weight(text) > 280 && r.length > 4) { r = r.slice(0, -2); text = build(r + "…"); }
+  // Xの文字数上限（全角2・URLは23換算で280）に収まるよう末尾を詰める。
+  // オチになるキレ理由はできるだけ残したいので、先に自分の回答を詰め、それでも長ければキレ理由を詰める
+  const weight = t => [...t.replace(url, "")].reduce((a, c) => a + (c.charCodeAt(0) > 0x10ff ? 2 : 1), 0) + 23;
+  let choice = L.clear ? "" : L.o.text, reason = L.reason || "", r = reason, c = choice, text = build(c, r);
+  while (weight(text) > 280 && choice.length > 10) { choice = choice.slice(0, -1); c = choice + "…"; text = build(c, r); }
+  while (weight(text) > 280 && reason.length > 8) { reason = reason.slice(0, -1); r = reason + "…"; text = build(c, r); }
+  // 改行・記号・絵文字を含む本文は encodeURIComponent でまるごとエンコードして渡す
   window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank", "noopener");
 }
 
