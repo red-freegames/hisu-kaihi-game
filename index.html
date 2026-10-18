@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ヒス回避ゲーム</title>
+<meta name="description" content="いつか訪れる（あるいは日常の）ヒス対面時に備えろ！実践的ヒス回避トレーニング">
+<meta property="og:title" content="ヒス回避ゲーム">
+<meta property="og:description" content="対ヒス訓練。昨日までの正解が今日の正解とは限らない……">
+<script>
+/* =====================================================================
+ *  設問データ（CONST_QUESTIONS）
+ *  ---------------------------------------------------------------------
+ *  ・この配列に追記するだけで設問を拡張できます（各キャラ100問・計300問想定）
+ *  ・character : "クレーマー" | "彼女" | "母親"
+ *  ・options   : 4つ。rate は隠し生存確率 0（絶対NG）/ 10（ワンチャン）/ 40（ハーフ）/ "MAIN"（本命：難易度ごとに可変）のいずれか
+ *                （表示順は毎回シャッフルされるので、記述順は自由）
+ *  ・failure_messages : options と同じ並び順で、その選択肢で爆死した時の敗因
+ * ===================================================================== */
+const CONST_QUESTIONS = [
+  // ───────────── クレーマー（EASY） ─────────────
+  { id: "C001", character: "クレーマー", prompt: "おい！注文してから5分も経ってるぞ！どうなってるんだ！",
+    options: [
+      { text: "大変お待たせして申し訳ございません。すぐに確認いたします！", rate: "MAIN" },
+      { text: "只今大変混み合っておりまして……", rate: 40 },
+      { text: "あと3分ほどでお出しできます", rate: 10 },
+      { text: "5分ならまだ早い方ですよ", rate: 0 } ],
+    failure_messages: ["「すぐに」の発音が軽薄", "言い訳の匂い", "具体的な数字が逆に煽りに聞こえた", "火に油どころかガソリンを注いだ"] },
+  { id: "C002", character: "クレーマー", prompt: "このポイントカード期限切れってどういうこと！？昨日まで使えたでしょ！",
+    options: [
+      { text: "ご不便をおかけし申し訳ございません。一度確認してまいります", rate: "MAIN" },
+      { text: "規約で有効期限が決まっておりまして……", rate: 40 },
+      { text: "新しいカードをお作りしましょうか？", rate: 10 },
+      { text: "昨日も期限切れでしたよ", rate: 0 } ],
+    failure_messages: ["「確認」という単語へのアレルギー", "「規約」という冷たい響き", "話をすり替えたと判断された", "正論という名の核ミサイル"] },
+  { id: "C003", character: "クレーマー", prompt: "店長を呼べ！お前じゃ話にならん！",
+    options: [
+      { text: "かしこまりました。すぐにお呼びいたします", rate: "MAIN" },
+      { text: "まずは私がお話を伺います", rate: 40 },
+      { text: "店長は本日不在でして……", rate: 10 },
+      { text: "話にならないのはお互い様ですね", rate: 0 } ],
+    failure_messages: ["店長の到着が3秒遅かった", "「まずは」で段階を踏まれた屈辱", "不在の店長への怒りがこちらに転移", "煽りスキル検定1級の発言"] },
+  { id: "C004", character: "クレーマー", prompt: "袋いらないって言ったよね？なんで入れてるの？",
+    options: [
+      { text: "失礼いたしました！すぐにお出しします", rate: "MAIN" },
+      { text: "袋代はいただいておりませんので……", rate: 40 },
+      { text: "そのままお持ち帰りいただいても……", rate: 10 },
+      { text: "声が小さくて聞こえませんでした", rate: 0 } ],
+    failure_messages: ["袋から出す時のガサガサ音", "金の問題じゃないと30分説教", "環境問題について語り始めた", "声量のせいにした大罪"] },
+  { id: "C005", character: "クレーマー", prompt: "この商品、写真と全然違うじゃない！",
+    options: [
+      { text: "ご期待と異なり申し訳ございません。返品・交換を承ります", rate: "MAIN" },
+      { text: "写真はイメージですと記載がございまして……", rate: 40 },
+      { text: "実物の方がかわいいと評判なんですよ", rate: 10 },
+      { text: "写真を信じる方が悪いですよ", rate: 0 } ],
+    failure_messages: ["「ご期待」という言葉で期待した自分を責められた気がした", "注釈を指差した指の角度", "セールストークの匂いを嗅ぎ取られた", "人格否定とみなされた"] },
+  { id: "C006", character: "クレーマー", prompt: "レジ打ち遅すぎ！何年やってんの？",
+    options: [
+      { text: "申し訳ございません、急いでおります！", rate: "MAIN" },
+      { text: "研修中でして……", rate: 40 },
+      { text: "精一杯やっております！", rate: 10 },
+      { text: "3年です（ドヤ）", rate: 0 } ],
+    failure_messages: ["急いだ結果バーコードが1回読めなかった", "名札に研修中マークがなかった", "精一杯アピールがウザかった", "ドヤ顔が完全に見られていた"] },
+  { id: "C007", character: "クレーマー", prompt: "電話で言ってたことと違うじゃないか！誰が言ったんだ！",
+    options: [
+      { text: "行き違いがあり申し訳ございません。記録を確認いたします", rate: "MAIN" },
+      { text: "担当者の名前はお分かりになりますか？", rate: 40 },
+      { text: "通話記録には残っていないようでして……", rate: 10 },
+      { text: "お客様の聞き間違いでは？", rate: 0 } ],
+    failure_messages: ["保留音がクラシックで癪に障った", "客に調べさせるのかと激昂", "嘘つき呼ばわりされたと解釈", "全責任を押し付ける禁断の一言"] },
+  { id: "C008", character: "クレーマー", prompt: "なんで私だけ順番飛ばされたの！？",
+    options: [
+      { text: "大変失礼いたしました！すぐにご案内します", rate: "MAIN" },
+      { text: "番号札の順でご案内しておりまして……", rate: 40 },
+      { text: "前の方はご予約されていたので……", rate: 10 },
+      { text: "飛ばしたくなる雰囲気だったので", rate: 0 } ],
+    failure_messages: ["案内された席が空調の真下", "番号札をなくしていた", "予約制なら最初に言えと延長戦", "本音が漏れた"] },
+  { id: "C009", character: "クレーマー", prompt: "マニュアル通りの対応しかできないの？",
+    options: [
+      { text: "ご要望をもう一度詳しくお聞かせいただけますか", rate: "MAIN" },
+      { text: "できる範囲で対応させていただきます", rate: 40 },
+      { text: "マニュアルにはないですが、やってみます！", rate: 10 },
+      { text: "マニュアル以外は時給に含まれていないので", rate: 0 } ],
+    failure_messages: ["同じことを2回言わせた罪", "「できる範囲」が狭そうに聞こえた", "無責任な安請け合いと判断", "労使問題を持ち込んだ"] },
+  { id: "C010", character: "クレーマー", prompt: "このクーポン使えないってどういうこと！？",
+    options: [
+      { text: "ご不便をおかけします。代わりに使える特典をお調べします", rate: "MAIN" },
+      { text: "対象外の商品でして……", rate: 40 },
+      { text: "こちら、去年のクーポンですね", rate: 10 },
+      { text: "クーポンに頼る生活なんですね", rate: 0 } ],
+    failure_messages: ["「代わり」＝妥協させられる感", "「対象外」＝自分が対象外と言われた気がした", "物持ちの良さを否定された", "生活レベルに言及した大罪"] },
+  { id: "C011", character: "クレーマー", prompt: "お釣り少ないんだけど！！",
+    options: [
+      { text: "大変申し訳ございません、すぐに確認いたします", rate: "MAIN" },
+      { text: "レシートを拝見してもよろしいですか？", rate: 40 },
+      { text: "防犯カメラで確認いたしますね", rate: 10 },
+      { text: "いや、ちゃんと渡しましたけど", rate: 0 } ],
+    failure_messages: ["レジ締め確認で2分待たされた", "疑われたと感じた", "犯罪者扱いされたと激怒", "即否定は宣戦布告"] },
+  { id: "C012", character: "クレーマー", prompt: "温めますかって聞かないの？普通聞くでしょ？",
+    options: [
+      { text: "失礼いたしました！温めますか？", rate: "MAIN" },
+      { text: "お弁当以外も温めましょうか？", rate: 40 },
+      { text: "温めない派の方かと思いまして……", rate: 10 },
+      { text: "普通って何ですか？", rate: 0 } ],
+    failure_messages: ["今聞かれても遅いという理論", "サラダまで温める気かと逆ギレ", "見た目で判断されたと激昂", "哲学的反論は燃料"] },
+  { id: "C013", character: "クレーマー", prompt: "さっきから態度悪くない？今笑ったでしょ！",
+    options: [
+      { text: "不快な思いをさせてしまい申し訳ございません", rate: "MAIN" },
+      { text: "元々こういう顔でして……", rate: 40 },
+      { text: "笑っていません、真顔です", rate: 10 },
+      { text: "あ、バレました？", rate: 0 } ],
+    failure_messages: ["謝罪中の口角が1mm上がって見えた", "顔を言い訳にした", "真顔が逆に怖かった", "バレた"] },
+  { id: "C014", character: "クレーマー", prompt: "駐車場狭すぎ！車擦ったらどうしてくれるの！",
+    options: [
+      { text: "ご不便をおかけしております。ご意見として本部に伝えます", rate: "MAIN" },
+      { text: "誘導員をお付けしましょうか？", rate: 40 },
+      { text: "軽自動車専用スペースもございます", rate: 10 },
+      { text: "運転がお上手なら大丈夫ですよ", rate: 0 } ],
+    failure_messages: ["「本部」という単語の遠さ", "運転下手扱いされた", "車のサイズでマウントを取られた", "運転技術への挑戦状"] },
+  { id: "C015", character: "クレーマー", prompt: "ネットに書くからね！こんな店潰してやる！",
+    options: [
+      { text: "ご不快な思いをさせ、心よりお詫び申し上げます", rate: "MAIN" },
+      { text: "ご意見はこちらの窓口でも承っております", rate: 40 },
+      { text: "どちらのサイトに書かれますか？", rate: 10 },
+      { text: "星5でお願いしますね♪", rate: 0 } ],
+    failure_messages: ["お詫びの声に感情が乗っていなかった", "たらい回しの気配を察知", "メモを取ろうとしたのが挑発", "空気を読まない営業スマイル"] },
+  { id: "C016", character: "クレーマー", prompt: "なんでこの値段なの？隣の店はもっと安かったよ！",
+    options: [
+      { text: "貴重な情報をありがとうございます。担当に伝えます", rate: "MAIN" },
+      { text: "当店は品質にこだわっておりまして……", rate: 40 },
+      { text: "お値引きはできかねます", rate: 10 },
+      { text: "じゃあ隣で買えばいいのでは？", rate: 0 } ],
+    failure_messages: ["「ありがとう」が皮肉に聞こえた", "安い店を見下したと解釈", "まだ値引きを頼んでいないのに断られた", "完全論破は死を招く"] },
+
+  // ───────────── 彼女（NORMAL） ─────────────
+  { id: "G001", character: "彼女", prompt: "ねえ、私が今なんで怒ってるかわかる？",
+    options: [
+      { text: "ごめん、ちゃんと知りたい。話してくれる？", rate: "MAIN" },
+      { text: "昨日LINE返すの遅かったこと……？", rate: 40 },
+      { text: "髪切った？", rate: 10 },
+      { text: "え、怒ってるの？", rate: 0 } ],
+    failure_messages: ["「話して」＝自分で考える気がないと判定", "それじゃない上に別の罪も自白", "切ってない", "怒っていることにすら気付いていない"] },
+  { id: "G002", character: "彼女", prompt: "仕事と私、どっちが大事なの？",
+    options: [
+      { text: "もちろん君だよ。だから仕事も頑張れるんだ", rate: "MAIN" },
+      { text: "比べるものじゃないよ", rate: 40 },
+      { text: "君。今すぐ会社辞める", rate: 10 },
+      { text: "今それ聞く？締め切り前なんだけど", rate: 0 } ],
+    failure_messages: ["「だから」の後が長かった", "逃げたと判定", "それはそれで重いと引かれた", "仕事と答えたも同然"] },
+  { id: "G003", character: "彼女", prompt: "別に怒ってないけど？",
+    options: [
+      { text: "そっか。でも何かあったらいつでも話してね", rate: "MAIN" },
+      { text: "本当に？なんでも言ってよ", rate: 40 },
+      { text: "怒ってる顔してるよ？", rate: 10 },
+      { text: "よかった！じゃあゲームするね", rate: 0 } ],
+    failure_messages: ["「でも」という接続詞が気に食わない", "しつこいと感じた", "顔のことを言われた", "その「別に」は激怒の意だった"] },
+  { id: "G004", character: "彼女", prompt: "この服とこの服、どっちがいいと思う？",
+    options: [
+      { text: "どっちも似合うけど、右の方が君らしいかな", rate: "MAIN" },
+      { text: "左かな", rate: 40 },
+      { text: "君が着たい方が一番だよ", rate: 10 },
+      { text: "どっちも同じに見える", rate: 0 } ],
+    failure_messages: ["本当は左を推してほしかった", "聞いた瞬間に右の気分に変わっていた", "責任放棄とみなされた", "青とネイビーで全く違う"] },
+  { id: "G005", character: "彼女", prompt: "最近、好きって言ってくれないよね",
+    options: [
+      { text: "ごめん、大好きだよ。ちゃんと言うようにする", rate: "MAIN" },
+      { text: "毎日思ってるよ", rate: 40 },
+      { text: "昨日言わなかったっけ？", rate: 10 },
+      { text: "言わなくても分かるでしょ", rate: 0 } ],
+    failure_messages: ["言わされた感が出ていた", "思ってるだけじゃ伝わらない", "言ってない（スクショあり）", "昭和の頑固親父判定"] },
+  { id: "G006", character: "彼女", prompt: "あの子のインスタ、なんでいいねしてるの？",
+    options: [
+      { text: "ごめん、無神経だった。気をつけるね", rate: "MAIN" },
+      { text: "流れてきたから押しただけだよ", rate: 40 },
+      { text: "君の投稿にもいいねしてるよ", rate: 10 },
+      { text: "かわいかったから", rate: 0 } ],
+    failure_messages: ["無神経だと自覚してたのにやった罪", "「だけ」が軽すぎた", "同列に扱われた", "正直すぎる自爆"] },
+  { id: "G007", character: "彼女", prompt: "今日、何の日か覚えてる？",
+    options: [
+      { text: "もちろん。付き合った記念日だよね", rate: "MAIN" },
+      { text: "……ヒントくれる？", rate: 40 },
+      { text: "金曜日！", rate: 10 },
+      { text: "何かあったっけ？", rate: 0 } ],
+    failure_messages: ["正解は初デート記念日だった", "ヒントを求めた時点で負け", "曜日を答えた", "記念日の存在否定"] },
+  { id: "G008", character: "彼女", prompt: "私って重い？",
+    options: [
+      { text: "全然。大事にしてくれて嬉しいよ", rate: "MAIN" },
+      { text: "ちょうどいいと思う", rate: 40 },
+      { text: "うーん……軽くはないかな", rate: 10 },
+      { text: "体重の話？", rate: 0 } ],
+    failure_messages: ["「全然」の即答が適当に聞こえた", "「ちょうどいい」は多少重いの意と解釈", "正直さが刺さった", "ボケが最悪の方向に"] },
+  { id: "G009", character: "彼女", prompt: "既読ついてから返信まで2時間かかったよね？",
+    options: [
+      { text: "ごめん、ちゃんと返したくて考えてたら遅くなった", rate: "MAIN" },
+      { text: "会議中だったんだ", rate: 40 },
+      { text: "スタンプは送ったよね？", rate: 10 },
+      { text: "既読つけてるだけマシでしょ", rate: 0 } ],
+    failure_messages: ["2時間考えた割に返信が「了解」", "会議中に既読をつけた矛盾", "スタンプは返信にカウントされない", "開き直りの極み"] },
+  { id: "G010", character: "彼女", prompt: "どうせ私のことなんてどうでもいいんでしょ",
+    options: [
+      { text: "そんなことないよ。何かあった？話聞くよ", rate: "MAIN" },
+      { text: "どうでもよかったら一緒にいないよ", rate: 40 },
+      { text: "またそれ？", rate: 10 },
+      { text: "うん（スマホを見ながら）", rate: 0 } ],
+    failure_messages: ["スマホを置くのが0.5秒遅れた", "理屈で返された", "「また」で過去の罪を蒸し返された", "生返事で肯定"] },
+  { id: "G011", character: "彼女", prompt: "ご飯？どこでもいいよ",
+    options: [
+      { text: "じゃあ候補を3つ出すから選んで！", rate: "MAIN" },
+      { text: "パスタは？", rate: 40 },
+      { text: "ラーメンにしよう", rate: 10 },
+      { text: "じゃあ牛丼で", rate: 0 } ],
+    failure_messages: ["3つとも今日の気分じゃなかった", "昨日もパスタだった", "デートでラーメンはない派", "「どこでもいい」を真に受けた罪"] },
+  { id: "G012", character: "彼女", prompt: "元カノとはどこ行ったの？",
+    options: [
+      { text: "あんまり覚えてないな。それより今度ここ行かない？", rate: "MAIN" },
+      { text: "あんまり出かけなかったよ", rate: 40 },
+      { text: "普通に水族館とか……", rate: 10 },
+      { text: "ちょうど今いるこのカフェ", rate: 0 } ],
+    failure_messages: ["話題転換が雑", "じゃあ家で何してたのか追及", "思い出のクラゲに嫉妬", "地雷原でタップダンス"] },
+  { id: "G013", character: "彼女", prompt: "私が太ったと思ってるでしょ",
+    options: [
+      { text: "全く思ってないよ。いつも可愛いよ", rate: "MAIN" },
+      { text: "健康的でいいと思う", rate: 40 },
+      { text: "気にならないよ", rate: 10 },
+      { text: "ちょっとだけね", rate: 0 } ],
+    failure_messages: ["「いつも」が手抜きに聞こえた", "「健康的」＝太ったことの肯定", "太ったこと自体は否定しなかった", "思ってた"] },
+  { id: "G014", character: "彼女", prompt: "なんで聞いてくれないの？（何も言っていない）",
+    options: [
+      { text: "ごめん、気付けなかった。どうしたの？", rate: "MAIN" },
+      { text: "何か言いたいことあった？", rate: 40 },
+      { text: "言ってくれなきゃわからないよ", rate: 10 },
+      { text: "え、何も言ってないよね？", rate: 0 } ],
+    failure_messages: ["気付くべきだったと延長戦", "察してほしかった", "正論ハラスメント", "事実確認は戦争の合図"] },
+  { id: "G015", character: "彼女", prompt: "友達の彼氏はサプライズしてくれるんだって",
+    options: [
+      { text: "そうなんだ。俺ももっと君を喜ばせたいな", rate: "MAIN" },
+      { text: "どんなサプライズだったの？", rate: 40 },
+      { text: "うちはうち、よそはよそ", rate: 10 },
+      { text: "じゃあその彼氏と付き合えば？", rate: 0 } ],
+    failure_messages: ["予告した時点でサプライズではない", "参考にする気満々でムカつく", "お母さんみたい", "最悪の二択提示"] },
+  { id: "G016", character: "彼女", prompt: "ねえ、聞いてる？",
+    options: [
+      { text: "聞いてるよ。バイト先の先輩の話だよね", rate: "MAIN" },
+      { text: "うん、聞いてる聞いてる", rate: 40 },
+      { text: "ごめん、もう一回いい？", rate: 10 },
+      { text: "え、何か言ってた？", rate: 0 } ],
+    failure_messages: ["要約が先輩じゃなくて後輩だった", "「聞いてる」を2回言った", "2回目は話したくない", "ずっと独り言扱い"] },
+
+  // ───────────── 母親（HARD） ─────────────
+  { id: "M001", character: "母親", prompt: "あんた、いつまで寝てんの！",
+    options: [
+      { text: "ごめん、今起きる！", rate: "MAIN" },
+      { text: "今日は休みだから……", rate: 40 },
+      { text: "あと5分……", rate: 10 },
+      { text: "起こさないでって言ったじゃん", rate: 0 } ],
+    failure_messages: ["起き上がる速度が遅い", "休みでも起きるのが我が家の掟", "5分が永遠に感じた母", "起こしてもらう恩知らず判定"] },
+  { id: "M002", character: "母親", prompt: "部屋片付けなさいって何回言わせるの！",
+    options: [
+      { text: "ごめん、今からやるね", rate: "MAIN" },
+      { text: "どこに何があるかは分かってるから", rate: 40 },
+      { text: "これでも片付けた方なんだけど", rate: 10 },
+      { text: "じゃあ言わなきゃいいじゃん", rate: 0 } ],
+    failure_messages: ["「今から」は昨日も聞いたセリフ", "自己流整理術は通用しない", "この状態で！？", "反抗期の再来"] },
+  { id: "M003", character: "母親", prompt: "お母さんの話、聞いてないでしょ！",
+    options: [
+      { text: "ごめん、ちゃんと聞くね", rate: "MAIN" },
+      { text: "聞いてるよ、晩ご飯の話でしょ", rate: 40 },
+      { text: "イヤホンしてたから", rate: 10 },
+      { text: "聞いても同じ話だし", rate: 0 } ],
+    failure_messages: ["スマホを伏せる音が反抗的", "それは10分前の話", "イヤホン自体が悪", "図星は凶器"] },
+  { id: "M004", character: "母親", prompt: "誰のおかげで大きくなったと思ってるの！",
+    options: [
+      { text: "お母さんのおかげです。いつもありがとう", rate: "MAIN" },
+      { text: "感謝はしてるよ……", rate: 40 },
+      { text: "お父さんも頑張ってたよ", rate: 10 },
+      { text: "牛乳のおかげ", rate: 0 } ],
+    failure_messages: ["感謝が突然すぎて嘘っぽい", "「……」の間が長かった", "父の名前は禁句だった", "ボケた"] },
+  { id: "M005", character: "母親", prompt: "せっかく作ったのに残すの！？",
+    options: [
+      { text: "ごめん、全部食べるよ。美味しいよ", rate: "MAIN" },
+      { text: "お腹いっぱいで……明日食べるね", rate: 40 },
+      { text: "ちょっと味が濃くて", rate: 10 },
+      { text: "頼んでないし", rate: 0 } ],
+    failure_messages: ["「美味しいよ」が棒読み", "おやつを食べていたのがバレた", "料理批評は宣戦布告", "母の心がバラバラになった"] },
+  { id: "M006", character: "母親", prompt: "あんたのためを思って言ってるのよ！",
+    options: [
+      { text: "うん、分かってる。ありがとう", rate: "MAIN" },
+      { text: "でも自分で決めたいんだ", rate: 40 },
+      { text: "それ前も聞いた", rate: 10 },
+      { text: "自分のためでしょ", rate: 0 } ],
+    failure_messages: ["分かってるならなぜやらない理論", "「でも」は反抗の狼煙", "前も聞いたならなぜ直さない", "核心を突きすぎた"] },
+  { id: "M007", character: "母親", prompt: "なんで連絡しないの！心配したでしょ！",
+    options: [
+      { text: "心配かけてごめん。次から必ず連絡する", rate: "MAIN" },
+      { text: "スマホの電池が切れちゃってて", rate: 40 },
+      { text: "もう大人なんだから大丈夫だよ", rate: 10 },
+      { text: "既読はつけたじゃん", rate: 0 } ],
+    failure_messages: ["「必ず」は前回も言った", "モバイルバッテリーを渡していた", "親にとっては永遠の子供", "既読は返事ではない"] },
+  { id: "M008", character: "母親", prompt: "近所の〇〇ちゃん、もう結婚したんだって",
+    options: [
+      { text: "そうなんだ、おめでたいね", rate: "MAIN" },
+      { text: "私は私のペースでいくよ", rate: 40 },
+      { text: "相手いないし", rate: 10 },
+      { text: "比べないでよ！〇〇ちゃんちの子になろうかな", rate: 0 } ],
+    failure_messages: ["完全に他人事の顔をしていた", "ペース遅すぎ論争が開幕", "お見合い写真が出てきた", "母の涙腺が崩壊"] },
+  { id: "M009", character: "母親", prompt: "なんでお母さんばっかり家事しなきゃいけないの！",
+    options: [
+      { text: "ごめん、今日から洗い物は担当する", rate: "MAIN" },
+      { text: "何か手伝おうか？", rate: 40 },
+      { text: "言ってくれればやったのに", rate: 10 },
+      { text: "食洗機買えば？", rate: 0 } ],
+    failure_messages: ["洗い方が違うとダメ出し", "「手伝う」は他人事の言い方", "言わなくてもやれ", "合理性は母の敵"] },
+  { id: "M010", character: "母親", prompt: "その服なに？だらしない！",
+    options: [
+      { text: "着替えてくるね", rate: "MAIN" },
+      { text: "今これが流行ってるんだよ", rate: 40 },
+      { text: "家だからいいじゃん", rate: 10 },
+      { text: "お母さんが買ってきた服だよ", rate: 0 } ],
+    failure_messages: ["着替えた服も気に入らない", "流行をめぐる世代間戦争", "宅配便が来た瞬間だった", "自分のセンスを否定された"] },
+  { id: "M011", character: "母親", prompt: "ゲームばっかりしてないで勉強しなさい！",
+    options: [
+      { text: "うん、今やめるね", rate: "MAIN" },
+      { text: "このステージだけ終わらせて", rate: 40 },
+      { text: "ゲームも頭使うんだよ", rate: 10 },
+      { text: "さっきまで勉強してたし", rate: 0 } ],
+    failure_messages: ["電源を切る前にセーブしようとした", "そのステージが30分かかる", "屁理屈判定", "嘘が一瞬でバレた"] },
+  { id: "M012", character: "母親", prompt: "お母さんの気持ちなんて分からないでしょ！",
+    options: [
+      { text: "分かりたいと思ってる。話して", rate: "MAIN" },
+      { text: "大変だよね……", rate: 40 },
+      { text: "分かるよ", rate: 10 },
+      { text: "分かんない", rate: 0 } ],
+    failure_messages: ["「分かりたい」＝分かってないの裏返し", "共感が浅い", "簡単に分かられた", "ストレートすぎた"] },
+  { id: "M013", character: "母親", prompt: "電気つけっぱなし！何回言えば分かるの！",
+    options: [
+      { text: "ごめん、すぐ消す！", rate: "MAIN" },
+      { text: "すぐ戻るつもりだったんだ", rate: 40 },
+      { text: "LEDだから電気代安いよ", rate: 10 },
+      { text: "お母さんもつけっぱなしだったよ", rate: 0 } ],
+    failure_messages: ["消しに行った先の電気もついていた", "3時間戻らなかった", "電気代の講義が始まった", "カウンターは倍返し"] },
+  { id: "M014", character: "母親", prompt: "今の言い方なに？",
+    options: [
+      { text: "ごめん、言い方が悪かった", rate: "MAIN" },
+      { text: "普通に言っただけだよ", rate: 40 },
+      { text: "疲れてて……", rate: 10 },
+      { text: "そっちの言い方こそ何？", rate: 0 } ],
+    failure_messages: ["「言い方」だけ？内容は？", "普通が普通じゃなかった", "お母さんの方が疲れてる", "鏡返しは禁じ手"] },
+  { id: "M015", character: "母親", prompt: "部屋に勝手に入るなって何よ！親でしょ！",
+    options: [
+      { text: "ノックしてくれたら嬉しいな", rate: "MAIN" },
+      { text: "プライバシーってものがあるんだよ", rate: 40 },
+      { text: "見られたくないものがあって", rate: 10 },
+      { text: "親でも他人だよ", rate: 0 } ],
+    failure_messages: ["要求したこと自体が不遜", "カタカナ語が鼻についた", "何を隠してる！と家宅捜索", "母の存在意義を否定"] },
+  { id: "M016", character: "母親", prompt: "もういい！お母さん出ていくから！",
+    options: [
+      { text: "待って、ごめん。ちゃんと話そう", rate: "MAIN" },
+      { text: "落ち着いて、ね？", rate: 40 },
+      { text: "どこ行くの？", rate: 10 },
+      { text: "いってらっしゃい", rate: 0 } ],
+    failure_messages: ["引き止める手が0.3秒遅かった", "「落ち着いて」は最強の着火剤", "止める気がない質問", "見送った"] },
+];
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#fff6ef;--ink:#2a1a14;--sub:#7a5a4e;--card:#fff;--line:#f0d9cc;--red:#e8262b;--red2:#ff5a4e;--ok:#18a058;--gold:#f5a623;--hell:#1a0508}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;line-height:1.5;touch-action:manipulation;overflow-x:hidden}
+body.hell{--bg:#1a0508;--ink:#ffe9e4;--sub:#d79a8f;--card:#2c0d10;--line:#5a1c20}
+#app{max-width:520px;margin:0 auto;min-height:100%;padding:12px 16px 72px;position:relative}
+.screen{display:none}.screen.on{display:block}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+a{color:inherit}
+/* title */
+.logo{text-align:center;padding:18px 0 6px}
+.logo h1{font-size:44px;font-weight:900;letter-spacing:.02em;color:var(--red);text-shadow:3px 3px 0 #2a1a14;line-height:1.1}
+.logo .tag{display:inline-block;margin-top:8px;background:#2a1a14;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
+.concept{font-size:15px;font-weight:800;text-align:center;margin:12px 0 6px}
+.catch{font-size:12.5px;color:var(--sub);background:var(--card);border:2px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.diff{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:3px solid #2a1a14;border-radius:16px;padding:10px 12px;margin-bottom:10px;box-shadow:0 4px 0 #2a1a14;text-align:left}
+.diff:active{transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
+.diff svg{width:62px;height:62px;flex:none}
+.diff .lv{font-size:12px;font-weight:900;padding:1px 8px;border-radius:6px;color:#fff;display:inline-block}
+.diff b{display:block;font-size:16px}
+.diff small{color:var(--sub);font-size:11.5px}
+.lv.e{background:#18a058}.lv.n{background:#f08a00}.lv.h{background:var(--red)}
+.best{font-size:11.5px;color:var(--sub);text-align:center;margin-top:4px}
+/* game */
+.hud{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;margin-bottom:8px;gap:8px}
+.hud .stage{background:#2a1a14;color:#fff;padding:3px 10px;border-radius:99px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.hell .hud .stage{background:var(--red)}
+.hud .qn{font-size:20px;font-weight:900;white-space:nowrap}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.prog i{display:block;height:100%;background:var(--red);width:0}
+.scene{display:flex;gap:10px;align-items:flex-start}
+.face{width:104px;height:104px;flex:none;border-radius:16px;background:var(--card);border:3px solid #2a1a14}
+.face svg{width:100%;height:100%;display:block}
+.bubble{flex:1;background:var(--card);border:3px solid #2a1a14;border-radius:16px;padding:10px 12px;font-size:16.5px;font-weight:800;position:relative;min-height:104px;display:flex;align-items:center}
+.bubble:before{content:"";position:absolute;left:-12px;top:30px;border:8px solid transparent;border-right:10px solid #2a1a14}
+.who{font-size:11px;color:var(--sub);font-weight:700;margin:6px 0 2px}
+.mood{font-size:11.5px;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:5px 10px;margin:8px 0 12px}
+.mood b{color:var(--red)}
+.opts{display:grid;gap:9px}
+.opt{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--card);border:3px solid #2a1a14;border-radius:14px;padding:12px;font-size:15px;font-weight:700;box-shadow:0 4px 0 #2a1a14;min-height:56px}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
+.opt .k{flex:none;width:28px;height:28px;border-radius:8px;background:#2a1a14;color:#fff;display:grid;place-items:center;font-weight:900;font-size:14px}
+body.hell .opt .k{background:var(--red)}
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);background:var(--ok);color:#fff;font-weight:900;padding:8px 16px;border-radius:99px;font-size:14px;z-index:9;pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap}
+.toast.on{opacity:1}
+.hellban{display:none;background:var(--red);color:#fff;text-align:center;font-weight:900;padding:8px;border-radius:12px;margin-bottom:10px;font-size:14px}
+.hellban.on{display:block}
+/* result */
+#result{cursor:pointer}
+.boom{border-radius:18px;padding:14px;text-align:center;color:#fff;background:var(--red);border:3px solid #2a1a14;margin-bottom:10px}
+.boom.clear{background:var(--ok)}
+.boom.ng{background:#000;border-color:var(--red);box-shadow:0 0 0 4px var(--red) inset}
+.boom h2{font-size:26px;font-weight:900;line-height:1.2}
+.boom.ng h2{color:#ffde00;font-size:28px}
+.boom .face{width:110px;height:110px;margin:8px auto;background:#fff}
+.boom .roar{font-size:18px;font-weight:900;margin-top:4px}
+.boom .prob{margin-top:8px;font-size:13px;font-weight:800;background:rgba(0,0,0,.25);border-radius:10px;padding:6px 8px}
+.boom .prob em{font-style:normal;font-size:20px;color:#ffde00}
+.rec{display:flex;gap:8px;margin-bottom:10px}
+.rec div{flex:1;background:var(--card);border:3px solid #2a1a14;border-radius:14px;padding:8px;text-align:center}
+.rec small{display:block;font-size:11px;color:var(--sub);font-weight:700}
+.rec b{font-size:24px;font-weight:900}
+.cause{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
+.cause .h{font-size:11px;color:var(--sub);font-weight:800}
+.cause q{font-weight:800}
+.ans{list-style:none;margin-top:6px;display:grid;gap:4px}
+.ans li{display:flex;gap:6px;align-items:flex-start;font-size:12.5px}
+.badge{flex:none;font-size:10.5px;font-weight:900;color:#fff;border-radius:6px;padding:1px 5px;min-width:40px;text-align:center}
+.r0{background:#000}.r10{background:#9b1c1c}.r40{background:#e07a00}.rMAIN{background:var(--ok)}
+.ans li.me{font-weight:900}
+.ans li.me:after{content:"◀ 選択";color:var(--red);font-size:11px;white-space:nowrap}
+.btns{display:grid;gap:8px;margin-bottom:10px}
+.big{width:100%;border-radius:14px;padding:14px;font-size:17px;font-weight:900;border:3px solid #2a1a14;box-shadow:0 4px 0 #2a1a14}
+.big:active{transform:translateY(3px);box-shadow:0 1px 0 #2a1a14}
+.retry{background:var(--red);color:#fff}
+.x{background:#000;color:#fff}
+.sub{background:var(--card)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hint{text-align:center;font-size:12px;color:var(--sub);font-weight:700;margin-bottom:10px}
+details.zukan{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;cursor:auto}
+details.zukan summary{font-weight:900;font-size:14px;cursor:pointer}
+.zk{list-style:none;display:grid;gap:6px;margin-top:8px;max-height:280px;overflow:auto}
+.zk li{font-size:12px;border-bottom:1px dashed var(--line);padding-bottom:5px}
+.zk li .who2{color:var(--sub);font-size:10.5px}
+.zk li.new{background:#fff3b0;border-radius:6px}
+body.hell .zk li.new{background:#5a3a00}
+/* corner */
+.corner{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);font-size:11px;font-weight:800;pointer-events:none;z-index:5}
+.corner a,.corner span{pointer-events:auto;background:var(--card);border:2px solid #2a1a14;border-radius:99px;padding:3px 10px;text-decoration:none;white-space:nowrap}
+.corner a{background:#ffdd57;color:#2a1a14}
+.flash{animation:fl .25s}
+@keyframes fl{0%{background:#ff0000}100%{background:var(--bg)}}
+@media (min-width:600px){.logo h1{font-size:54px}.bubble{font-size:18px}.opt{font-size:16px}}
+@media (max-width:360px){.face{width:84px;height:84px}.bubble{min-height:84px;font-size:15px}.logo h1{font-size:36px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ===== タイトル ===== -->
+  <section id="title" class="screen on">
+    <div class="logo"><h1>ヒス回避<br>ゲーム</h1><span class="tag">実践的ヒス回避トレーニング</span></div>
+    <p class="concept">いつか訪れる（あるいは日常の）<br>ヒス対面時に備えろ！</p>
+    <p class="catch">ヒスを起こす人間（地雷）の機嫌は、時間・気分・血圧・直前の出来事によって<b>秒単位で変化する！</b>昨日までの正解が今日の正解とは限らない……自分の運と直感を研ぎ澄ませ！</p>
+    <div id="diffs"></div>
+    <p class="best" id="zkTitle"></p>
+  </section>
+
+  <!-- ===== ゲーム ===== -->
+  <section id="game" class="screen">
+    <div class="hud"><span class="stage" id="stage"></span><span class="qn" id="qn"></span></div>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="hellban" id="hellban">⚠ 限界突破 ⚠ 隠しステージ「無限地獄編」突入！本命の安全度が低下中……</div>
+    <div class="scene">
+      <div class="face" id="face"></div>
+      <div class="bubble" id="prompt"></div>
+    </div>
+    <p class="who" id="who"></p>
+    <p class="mood" id="mood"></p>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- ===== リザルト ===== -->
+  <section id="result" class="screen">
+    <div class="boom" id="boom"></div>
+    <p class="hint">▶ 画面タップ / Enter で即リトライ</p>
+    <div class="rec"><div><small>今回の記録</small><b id="recNow"></b></div><div><small>自己ベスト</small><b id="recBest"></b></div></div>
+    <div class="cause" id="cause"></div>
+    <div class="btns">
+      <button class="big retry" data-act="retry">⚡ 即リトライ（1問目から）</button>
+      <button class="big x" data-act="share">𝕏 記録をポストする</button>
+      <div class="row2"><button class="big sub" data-act="title">難易度選択へ</button><button class="big sub" data-act="next" id="nextBtn">次の難易度へ</button></div>
+    </div>
+    <details class="zukan" id="zukanBox"><summary id="zkSum"></summary><ul class="zk" id="zkList"></ul></details>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="corner">
+  <a id="coffee" target="_blank" rel="noopener">開発者にコーヒーを奢る☕</a>
+  <span>配信・動画利用大歓迎！商用利用OK</span>
+</div>
+
+<script>
+/* =====================================================================
+ *  設定
+ * ===================================================================== */
+const CONFIG = {
+  COFFEE_URL: "https://ko-fi.com/",            // ← 投げ銭ページのURLに差し替えてください
+  SHARE_URL: location.href.split("#")[0].split("?")[0],
+  HASHTAGS: "#ヒス回避ゲーム #対ヒス訓練 #クソゲー",
+  ENDLESS_RATES: [60, 55, 50],                // 隠しステージで本命(HARD 69%)が1問ごとに下がる値（最後の値で下げ止まり）
+};
+const MODES = {
+  EASY:   { char: "クレーマー", goal: 5,  main: 80, label: "EASY",   cls: "e", title: "激怒するクレーマー客" },
+  NORMAL: { char: "彼女",       goal: 8,  main: 74, label: "NORMAL", cls: "n", title: "メンヘラ気味の彼女" },
+  HARD:   { char: "母親",       goal: 10, main: 69, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true },
+};
+const CHARS = {
+  "クレーマー": { roars: ["責任者出せェェェ！！", "SNSで晒してやる！！", "客をナメてんのか！！", "二度と来るか！！（明日も来る）"],
+                  moods: ["朝の電車で足を踏まれた", "競馬で大穴を外した直後", "駐車場が満車だった", "コーヒーがぬるかった", "妻に小言を言われて出てきた"] },
+  "彼女":       { roars: ["もういい！！知らない！！", "なんでわかってくれないの！？", "前から思ってたけど！！", "既読無視するから！！"],
+                  moods: ["前髪が決まらなかった", "友達の惚気話を聞いた直後", "生理前", "インスタのいいねが少なかった", "推しが熱愛報道された"] },
+  "母親":       { roars: ["いい加減にしなさい！！", "誰に似たのかしら！！", "お母さんもう知らないからね！！", "口答えしない！！"],
+                  moods: ["PTAの会合帰り", "体重計に乗った直後", "ワイドショーで嫌なニュースを見た", "特売の卵が売り切れだった", "お父さんが靴下を脱ぎっぱなし"] },
+};
+const COMMON_MOODS = ["低気圧で頭痛", "血圧が秒単位で乱高下中", "空腹", "寝不足", "なぜか今日は機嫌がいい（危険）", "さっきまで笑っていた（危険）"];
+const LS = { best: "hisu_best_v1", zukan: "hisu_zukan_v1" };
+
+/* =====================================================================
+ *  ユーティリティ
+ * ===================================================================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const rnum = r => (r === "MAIN" ? 100 : r);   // 並べ替え用（本命を最上位扱い）
+const pick = a => a[(Math.random() * a.length) | 0];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+/* ===== 表情イラスト（通常 / 爆発 の静止画切り替えのみ） ===== */
+function faceSVG(ch, angry) {
+  const skin = angry ? "#ff7466" : "#ffd9bd";
+  const eyes = angry
+    ? '<path d="M36 50 L52 57 M84 50 L68 57" stroke="#2a1a14" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="63" r="4"/><circle cx="75" cy="63" r="4"/>'
+    : '<path d="M37 52 L51 54 M83 52 L69 54" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/><circle cx="45" cy="62" r="4"/><circle cx="75" cy="62" r="4"/>';
+  const mouth = angry
+    ? '<path d="M44 82 Q60 70 76 82 L72 94 Q60 88 48 94 Z" fill="#7a0d0d" stroke="#2a1a14" stroke-width="3"/><path d="M48 82 L72 82" stroke="#fff" stroke-width="4"/>'
+    : '<path d="M48 84 Q60 80 72 84" fill="none" stroke="#2a1a14" stroke-width="4" stroke-linecap="round"/>';
+  const vein = angry ? '<text x="84" y="34" font-size="26">💢</text><path d="M10 30 l8 6 M14 20 l6 9 M106 64 l8 -4" stroke="#e8262b" stroke-width="4" stroke-linecap="round"/>' : "";
+  let back = "", front = "";
+  if (ch === "クレーマー") {
+    back = '<rect x="38" y="104" width="44" height="20" fill="#3a4a7a"/><path d="M56 104 L64 104 L66 120 L60 124 L54 120Z" fill="#e8262b"/>';
+    front = '<path d="M22 58 Q20 40 30 40 L30 62Z M98 58 Q100 40 90 40 L90 62Z" fill="#555"/><path d="M42 76 Q60 70 78 76 Q60 74 42 76Z" fill="#444" stroke="#444" stroke-width="4"/><ellipse cx="60" cy="26" rx="14" ry="5" fill="#fff" opacity=".5"/>';
+  } else if (ch === "彼女") {
+    back = '<path d="M18 60 Q14 16 60 14 Q106 16 102 60 L106 110 L84 110 L84 60 L36 60 L36 110 L14 110Z" fill="#8a4b3a"/>';
+    front = '<path d="M26 50 Q30 18 60 18 Q90 18 94 50 Q80 34 62 40 Q48 30 26 50Z" fill="#8a4b3a"/><path d="M78 18 l14 -8 l2 14 Z M78 18 l-2 -14 l14 8Z" fill="#ff6fa8"/><circle cx="36" cy="74" r="6" fill="#ff9aa8" opacity=".6"/><circle cx="84" cy="74" r="6" fill="#ff9aa8" opacity=".6"/>';
+  } else {
+    back = '<circle cx="60" cy="14" r="13" fill="#5a3a2e"/>';
+    front = '<path d="M24 52 Q22 22 60 22 Q98 22 96 52 Q88 36 60 34 Q32 36 24 52Z" fill="#5a3a2e"/><g fill="none" stroke="#2a1a14" stroke-width="3"><circle cx="45" cy="62" r="10"/><circle cx="75" cy="62" r="10"/><path d="M55 62 L65 62"/></g><path d="M40 104 Q60 114 80 104 L84 124 L36 124Z" fill="#f4a3b5"/>';
+  }
+  return `<svg viewBox="0 0 120 124" xmlns="http://www.w3.org/2000/svg">${back}<ellipse cx="60" cy="62" rx="38" ry="42" fill="${skin}" stroke="#2a1a14" stroke-width="3"/>${eyes}${mouth}${front}${vein}</svg>`;
+}
+
+/* =====================================================================
+ *  ゲーム状態
+ * ===================================================================== */
+const S = { mode: null, q: 0, deck: [], cur: null, shown: [], endless: false, lock: false, last: null, resultAt: 0 };
+const POOL = {};
+CONST_QUESTIONS.forEach(q => (POOL[q.character] = POOL[q.character] || []).push(q));
+let toastTimer;
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  window.scrollTo(0, 0);
+}
+
+function renderTitle() {
+  const best = load(LS.best, {});
+  $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => `
+    <button class="diff" data-mode="${k}">${faceSVG(m.char, false)}
+      <div><span class="lv ${m.cls}">${m.label}</span><b>${m.title}</b>
+      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しステージ…？" : ""}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}</small></div></button>`).join("");
+  const z = load(LS.zukan, {});
+  $("zkTitle").textContent = `📖 地雷セリフ図鑑：${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除済み`;
+  document.body.classList.remove("hell");
+  show("title");
+}
+
+function start(mode) {
+  S.mode = mode; S.q = 1; S.endless = false; S.lock = false; S.deck = [];
+  document.body.classList.remove("hell");
+  $("hellban").classList.remove("on");
+  next();
+  show("game");
+}
+
+// 本命の現在の生存率
+function mainRate() {
+  if (!S.endless) return MODES[S.mode].main;
+  const i = S.q - MODES[S.mode].goal - 1;
+  return CONFIG.ENDLESS_RATES[Math.min(i, CONFIG.ENDLESS_RATES.length - 1)];
+}
+
+function next() {
+  const m = MODES[S.mode];
+  if (!S.deck.length) S.deck = shuffle(S.endless ? CONST_QUESTIONS : POOL[m.char]).filter(q => q !== S.cur);
+  const q = S.cur = S.deck.pop();
+  S.shown = shuffle(q.options.map((o, i) => ({ ...o, idx: i })));
+  $("stage").textContent = S.endless ? "隠しステージ：無限地獄編" : `${m.label}：${m.title}`;
+  $("qn").textContent = S.endless ? `${S.q}問目` : `${S.q} / ${m.goal}`;
+  $("bar").style.width = S.endless ? "100%" : ((S.q - 1) / m.goal * 100) + "%";
+  $("face").innerHTML = faceSVG(q.character, false);
+  $("prompt").textContent = q.prompt;
+  $("who").textContent = "▲ " + (S.endless ? q.character : m.title);
+  const bp = 120 + ((Math.random() * 80) | 0);
+  $("mood").innerHTML = `現在の機嫌：<b>血圧${bp}</b>／直前の出来事：${esc(pick(CHARS[q.character].moods.concat(COMMON_MOODS)))}`;
+  $("opts").innerHTML = S.shown.map((o, i) => `<button class="opt" data-i="${i}"><span class="k">${"ABCD"[i]}</span><span>${esc(o.text)}</span></button>`).join("");
+  S.lock = false;
+}
+
+function choose(i) {
+  if (S.lock || !S.shown[i]) return;
+  S.lock = true;
+  const o = S.shown[i];
+  const rate = o.rate === "MAIN" ? mainRate() : o.rate;
+  const survive = Math.random() * 100 < rate;   // ← 確率判定
+  if (!survive) return die(o, rate);
+
+  toast(`回避成功！（生存率${rate}%を突破）`);
+  S.q++;
+  const m = MODES[S.mode];
+  if (!S.endless && S.q > m.goal) {
+    if (m.endless) {               // HARD突破 → 隠しステージへ
+      S.endless = true; S.deck = [];
+      document.body.classList.add("hell");
+      $("hellban").classList.add("on");
+    } else return finish(true);
+  }
+  next();
+}
+
+function die(o, rate) {
+  const q = S.cur;
+  S.last = { q, o, rate, main: mainRate(), fail: q.failure_messages[o.idx], reached: S.q, endless: S.endless, clear: false };
+  // 図鑑登録
+  const z = load(LS.zukan, {}), key = q.id + ":" + o.idx;
+  S.last.isNew = !z[key];
+  z[key] = (z[key] || 0) + 1; save(LS.zukan, z);
+  document.body.classList.add("flash");
+  setTimeout(() => document.body.classList.remove("flash"), 260);
+  finish(false);
+}
+
+function finish(clear) {
+  const m = MODES[S.mode];
+  if (clear) S.last = { clear: true, reached: m.goal, endless: false };
+  const best = load(LS.best, {});
+  const isBest = S.last.reached > (best[S.mode] || 0);
+  if (isBest) { best[S.mode] = S.last.reached; save(LS.best, best); }
+  renderResult(isBest);
+  S.resultAt = Date.now();
+  show("result");
+}
+
+function renderResult(isBest) {
+  const L = S.last, m = MODES[S.mode];
+  const char = L.clear ? m.char : L.q.character;
+  if (L.clear) {
+    $("boom").className = "boom clear";
+    $("boom").innerHTML = `<h2>🎉 訓練完了！</h2><div class="face">${faceSVG(char, false)}</div>
+      <div class="roar">${m.title}を${m.goal}問連続で回避した！</div>
+      <div class="prob">今日の運と直感は本物だ。だが明日の機嫌は誰にも読めない……</div>`;
+  } else if (L.rate === 0) {
+    $("boom").className = "boom ng";
+    $("boom").innerHTML = `<h2>【絶対NG！】<br>ありえない選択肢！</h2><div class="face">${faceSVG(char, true)}</div>
+      <div class="roar">「${esc(pick(CHARS[char].roars))}」</div>
+      <div class="prob">⚠ 生存率 <em>0%</em> ── これは次から絶対に選んではいけない地雷！</div>`;
+  } else {
+    $("boom").className = "boom";
+    const main = L.o.rate === "MAIN";
+    $("boom").innerHTML = `<h2>💥 爆死！${main ? "（地雷変化）" : ""}</h2><div class="face">${faceSVG(char, true)}</div>
+      <div class="roar">「${esc(pick(CHARS[char].roars))}」</div>
+      <div class="prob">生存率<em>${L.rate}%</em>の選択肢で、<em>${100 - L.rate}%</em>の機嫌変化を引き当てて死亡</div>`;
+  }
+  const best = load(LS.best, {});
+  $("recNow").textContent = `${L.reached}問目` + (L.clear ? "" : "");
+  $("recBest").innerHTML = `${best[S.mode] || 0}問目${isBest ? ' <small style="color:var(--red)">NEW!</small>' : ""}`;
+
+  if (L.clear) {
+    $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！${S.mode !== "HARD" ? "次はさらに理不尽な相手が待っている……" : ""}`;
+  } else {
+    const sel = L.o.idx;
+    $("cause").innerHTML = `<div class="h">💀 敗因（${L.endless ? "隠しステージ・" : ""}${L.reached}問目）</div>
+      <q>${esc(L.o.text)}</q> → 「${esc(L.fail)}」
+      <div class="h" style="margin-top:8px">🔍 答え合わせ（隠し生存率）</div>
+      <ul class="ans">${L.q.options.map((o, i) => ({ o, i })).sort((a, b) => rnum(b.o.rate) - rnum(a.o.rate)).map(({ o, i }) => {
+        return `<li class="${i === sel ? "me" : ""}"><span class="badge r${o.rate}">${o.rate === "MAIN" ? "本命" + L.main + "%" : o.rate + "%"}</span><span>${esc(o.text)}</span></li>`;
+      }).join("")}</ul>`;
+  }
+  $("nextBtn").style.display = S.mode === "HARD" ? "none" : "";
+  $("nextBtn").textContent = S.mode === "EASY" ? "NORMALへ" : "HARDへ";
+  renderZukan(L.clear ? null : L.q.id + ":" + L.o.idx);
+}
+
+function renderZukan(newKey) {
+  const z = load(LS.zukan, {});
+  const items = [];
+  CONST_QUESTIONS.forEach(q => q.options.forEach((o, i) => { const k = q.id + ":" + i; if (z[k]) items.push({ q, o, i, k, n: z[k] }); }));
+  items.sort((a, b) => (b.k === newKey) - (a.k === newKey) || rnum(a.o.rate) - rnum(b.o.rate));
+  $("zkSum").textContent = `📖 解除した地雷セリフ図鑑（${items.length} / ${CONST_QUESTIONS.length * 4}）`;
+  $("zkList").innerHTML = items.length ? items.map(x => `<li class="${x.k === newKey ? "new" : ""}">
+      <span class="badge r${x.o.rate}">${x.o.rate === "MAIN" ? "本命" : x.o.rate + "%"}</span> <b>${esc(x.o.text)}</b>${x.k === newKey && S.last.isNew ? ' <b style="color:var(--red)">NEW</b>' : ""}<br>
+      <span class="who2">vs ${esc(x.q.character)}「${esc(x.q.prompt)}」 ／ 敗因：${esc(x.q.failure_messages[x.i])} ／ 被弾${x.n}回</span></li>`).join("")
+    : "<li>まだ地雷を踏んでいない……</li>";
+}
+
+function share() {
+  const L = S.last;
+  let cause;
+  if (L.clear) cause = `敗因なし！${MODES[S.mode].title}の訓練を完了`;
+  else if (L.rate === 0) cause = `絶対NG「${L.o.text}」を選んで即爆死（学習不足）`;
+  else if (L.o.rate === "MAIN") cause = `${L.rate}%の安牌を選んだのに「${L.fail}」で爆死（地雷変化）`;
+  else cause = `生存率${L.rate}%に賭けたが「${L.fail}」で爆死`;
+  const text = `【ヒス回避ゲーム】対ヒス訓練で『${L.reached}問目』まで生き残った！！\n` +
+    `👉 記録：【${L.reached}問目】到達${L.endless ? "（隠しステージ突入！）" : `（${MODES[S.mode].label}）`}\n` +
+    `💀 最後の敗因：『${cause}』\n${CONFIG.HASHTAGS} ${CONFIG.SHARE_URL}`;
+  window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank", "noopener");
+}
+
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 700);
+}
+
+/* =====================================================================
+ *  入力
+ * ===================================================================== */
+$("diffs").addEventListener("click", e => { const b = e.target.closest("[data-mode]"); if (b) start(b.dataset.mode); });
+$("opts").addEventListener("click", e => { const b = e.target.closest(".opt"); if (b) choose(+b.dataset.i); });
+$("result").addEventListener("click", e => {
+  if (Date.now() - S.resultAt < 100) return;              // 連打による誤リトライ防止（0.1秒）
+  if (e.target.closest("details")) return;
+  const b = e.target.closest("[data-act]");
+  const act = b ? b.dataset.act : "retry";                 // 画面のどこをタップしても即リトライ
+  if (act === "retry") start(S.mode);
+  else if (act === "share") share();
+  else if (act === "title") renderTitle();
+  else if (act === "next") start(S.mode === "EASY" ? "NORMAL" : "HARD");
+});
+document.addEventListener("keydown", e => {
+  if ($("game").classList.contains("on")) {
+    const i = "1234".indexOf(e.key) >= 0 ? "1234".indexOf(e.key) : "abcd".indexOf(e.key.toLowerCase());
+    if (i >= 0) choose(i);
+  } else if ($("result").classList.contains("on") && (e.key === "Enter" || e.key === " ") && Date.now() - S.resultAt > 100) {
+    e.preventDefault(); start(S.mode);
+  } else if (e.key === "Escape") renderTitle();
+});
+$("coffee").href = CONFIG.COFFEE_URL;
+renderTitle();
+</script>
+</body>
+</html>
