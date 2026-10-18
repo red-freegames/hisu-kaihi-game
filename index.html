@@ -27,11 +27,13 @@
  *  ・character : "クレーマー" | "彼女" | "母親"
  *  ・options   : 4つ。各選択肢に以下を1対1で持たせる（表示順は毎回シャッフル）
  *      text        : 選択肢のセリフ
- *      rate        : 隠し生存確率 0（絶対NG）/ 10（ワンチャン）/ 40（ハーフ）/ "MAIN"（正解。生存率は難易度ごとに MODES.main）
+ *      rate        : 選択肢の種類 "MAIN"（正解）/ 40（惜しい）/ 10（危険）/ 0（絶対NG）
+ *                    実際の生存率は難易度ごとの MODES.rates で決まる（EASYは正解100%・それ以外0%の完全ロジック）
  *      reaction    : 生き残った時の相手の返答（この選択肢専用）
  *      deathReason : 爆死した時の相手のキレ理由（この選択肢専用。画面上部と敗因で同じ文を表示）
  *  【書き方の方針】
- *   - 全設問に「選べば回避できる正解（MAIN）」が必ず1つある。EASY・NORMALでは100%生存、HARDのみまれに理不尽爆死
+ *   - 全設問に「選べば回避できる正解（MAIN）」が必ず1つある。EASYは運要素ゼロ（正解なら必ず生存・不正解なら必ず爆死）、
+ *     NORMALはごくまれに、HARDは4回に1回ほど、正解でも理不尽に爆死する
  *   - クレーマーの正解は「誠意ある素直な対応」（謝る＋その場で具体的に動く）
  *   - 彼女・母親の正解は「相手の本音に筋の通った形で応える回答」。
  *     ハズレは一見よさそうでも、どこかに綻び（言い訳・はぐらかし・的外れ）があり、その綻びを deathReason で突かれる
@@ -561,12 +563,12 @@ const CONFIG = {
   TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
   REACT_MS: 550,                              // 生存時、許しのセリフを見せる長さ
   BOOM_MS: 380,                               // 死亡時、キレ顔＋爆発を見せてからリザルトへ
-  ENDLESS_RATES: [92, 88, 85],                // 隠しステージで正解(HARD 95%)が1問ごとに下がる値（最後の値で下げ止まり）
+  ENDLESS_RATES: [70, 65, 60],                // 隠しステージで正解(HARD 75%)の生存率が1問ごとに下がる値（最後の値で下げ止まり）
 };
 const MODES = {
-  EASY:   { char: "クレーマー", goal: 5,  main: 100, label: "EASY",   cls: "e", title: "激怒するクレーマー客", hint: "誠意ある対応を選べば必ず回避できる" },
-  NORMAL: { char: "彼女",       goal: 8,  main: 100, label: "NORMAL", cls: "n", title: "メンヘラ気味の彼女", hint: "正解は必ず1つ。ハズレの綻びを見抜け" },
-  HARD:   { char: "母親",       goal: 10, main: 95, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true, hint: "正解を選んでも、まれに理不尽に爆死" },
+  EASY:   { char: "クレーマー", goal: 5, rates: { MAIN: 100, 40: 0,  10: 0,  0: 0 }, label: "EASY",   cls: "e", title: "激怒するクレーマー客", hint: "運要素なし。誠意ある対応を選べば必ず回避できる" },
+  NORMAL: { char: "彼女",       goal: 7, rates: { MAIN: 93,  40: 30, 10: 10, 0: 0 }, label: "NORMAL", cls: "n", title: "メンヘラ気味の彼女", hint: "文脈を読めば回避できる。……ただし、ごくまれに" },
+  HARD:   { char: "母親",       goal: 7, rates: { MAIN: 75,  40: 40, 10: 10, 0: 0 }, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true, hint: "正解でも4回に1回は理不尽にキレられる" },
 };
 const CHARS = {
   "クレーマー": {
@@ -676,7 +678,7 @@ function start(mode) {
 
 // 本命の現在の生存率
 function mainRate() {
-  if (!S.endless) return MODES[S.mode].main;
+  if (!S.endless) return MODES[S.mode].rates.MAIN;
   const i = S.q - MODES[S.mode].goal - 1;
   return CONFIG.ENDLESS_RATES[Math.min(i, CONFIG.ENDLESS_RATES.length - 1)];
 }
@@ -716,7 +718,7 @@ function choose(i) {
   $("prompt").classList.add("silent");
   // 3) タメの後に確率判定
   later(CONFIG.TAME_MS, () => {
-    const rate = o.rate === "MAIN" ? mainRate() : o.rate;
+    const rate = o.rate === "MAIN" ? mainRate() : MODES[S.mode].rates[o.rate];
     const survive = Math.random() * 100 < rate;   // ← 確率判定
     $("prompt").classList.remove("silent");
     if (!survive) {
@@ -874,8 +876,8 @@ const ACHIEVEMENTS = [
   { icon: "🧾", name: "クレーマー撃退",     desc: "EASYをクリア",                             ok: (s) => (s.clears.EASY || 0) > 0 },
   { icon: "💔", name: "彼女の機嫌マスター", desc: "NORMALをクリア",                           ok: (s) => (s.clears.NORMAL || 0) > 0 },
   { icon: "👩", name: "母の壁を越えし者",   desc: "HARDをクリア（隠しステージ到達）",         ok: (s) => (s.clears.HARD || 0) > 0 },
-  { icon: "🔥", name: "無限地獄の住人",     desc: "隠しステージで15問目に到達",               ok: (s, b) => (b.HARD || 0) >= 15 },
-  { icon: "👹", name: "地獄の底を見た",     desc: "隠しステージで20問目に到達",               ok: (s, b) => (b.HARD || 0) >= 20 },
+  { icon: "🔥", name: "無限地獄の住人",     desc: "HARDで通算10問目に到達",               ok: (s, b) => (b.HARD || 0) >= 10 },
+  { icon: "👹", name: "地獄の底を見た",     desc: "HARDで通算15問目に到達",               ok: (s, b) => (b.HARD || 0) >= 15 },
   { icon: "🤯", name: "理不尽の洗礼",       desc: "正解を選んだのに爆死する",                 ok: (s) => s.mainDeaths >= 1 },
   { icon: "💣", name: "地雷を踏み抜いた",   desc: "絶対NGを選んで爆死する",                   ok: (s) => s.ngDeaths >= 1 },
   { icon: "🏃", name: "逃げは許されない",   desc: "「確認してまいります」で爆死する",         ok: (s) => s.escapeDeaths >= 1 },
