@@ -49,14 +49,14 @@ const CONST_QUESTIONS = [
     options: [
       { text: "大変お待たせしております。今すぐ厨房を急がせ、お詫びにドリンクをお持ちします", rate: "MAIN", reaction: "……おう、早くしろよ", deathReason: "ドリンクで誤魔化すな！先に料理を持ってこい！" },
       { text: "5分も！？……私が今から厨房に立って作ります。1分で出します", rate: 40, reaction: "……ふん、1分な。測ってるからな", deathReason: "お前が作るのかよ！素人の料理なんか食えるか！" },
-      { text: "混雑時は10分ほどいただいております。あと5分お待ちください", rate: 10, reaction: "……チッ、5分だけだぞ", deathReason: "あと5分だと！？待たせる前提で話すな！" },
-      { text: "厨房に確認してまいります", rate: 0, deathReason: ESCAPE_NG } ] },
+      { text: "混雑時は10分ほどいただいております。大変恐縮ですが、あと5分だけお待ちいただけますか", rate: 10, reaction: "……チッ、5分だけだぞ", deathReason: "あと5分だと！？待たせる前提で話すな！" },
+      { text: "申し訳ございません、厨房の者に状況を確認してまいりますので、少々お待ちください", rate: 0, deathReason: ESCAPE_NG } ] },
   { id: "C002", character: "クレーマー", prompt: "このポイントカード期限切れってどういうこと！？昨日まで使えたでしょ！",
     options: [
       { text: "ご不便をおかけしてすみません。昨日までの分は、今回に限り私の判断でお付けします", rate: "MAIN", reaction: "……最初からそう言えばいいのよ", deathReason: "『今回に限り』って何よ！次に来たら使えないの！？" },
-      { text: "それは悔しいですよね……いつ頃から貯めていらしたんですか？", rate: 40, reaction: "……3年よ。分かってくれるならいいけど", deathReason: "思い出話してる場合じゃないの！ポイントの話をしてるの！" },
+      { text: "それは悔しいですよね……長く使ってくださってたんですね。いつ頃から貯めていらしたんですか？", rate: 40, reaction: "……3年よ。分かってくれるならいいけど", deathReason: "思い出話してる場合じゃないの！ポイントの話をしてるの！" },
       { text: "期限はカード裏面に記載がございます。新しいカードでまた貯められますよ", rate: 10, reaction: "……まあ、新しいのでいいわ", deathReason: "裏面なんか誰が読むのよ！また一から貯めろって言うの！？" },
-      { text: "上の者に確認してまいります", rate: 0, deathReason: ESCAPE_NG } ] },
+      { text: "大変申し訳ございません。上の者に確認してまいりますので、少々お待ちいただけますか", rate: 0, deathReason: ESCAPE_NG } ] },
   { id: "C003", character: "クレーマー", prompt: "店長を呼べ！お前じゃ話にならん！",
     options: [
       { text: "かしこまりました、すぐお呼びします。お待ちの間、私がお話を伺ってもよろしいですか", rate: "MAIN", reaction: "……ああ、聞いとけ", deathReason: "お前に話してどうなる！早く店長を呼べ！" },
@@ -73,26 +73,26 @@ const CONST_QUESTIONS = [
     options: [
       { text: "がっかりさせてしまい申し訳ありません。返品でも交換でも、今ここですぐ承ります", rate: "MAIN", reaction: "……じゃあ交換で", deathReason: "返品すればいいって問題じゃないの！楽しみにしてた気持ちを返して！" },
       { text: "……確かに、写真の方が盛ってますね。どこが一番違います？", rate: 40, reaction: "……色よ色。分かってるじゃない", deathReason: "盛ってるって認めるの！？じゃあ詐欺じゃない！" },
-      { text: "写真は照明の関係で、実物と色味が異なる場合がございます", rate: 10, reaction: "……まあ、照明ならしょうがないわね", deathReason: "そんな言い訳、写真の下に小さく書いとけば済むと思ってるの！？" },
-      { text: "メーカーに確認してまいります", rate: 0, deathReason: ESCAPE_NG } ] },
+      { text: "写真は照明の関係で、実物と色味が異なる場合がございます。商品ページにも記載しておりまして", rate: 10, reaction: "……まあ、照明ならしょうがないわね", deathReason: "そんな言い訳、写真の下に小さく書いとけば済むと思ってるの！？" },
+      { text: "大変申し訳ございません。メーカーに確認のうえ、後日あらためて担当よりご連絡いたします", rate: 0, deathReason: ESCAPE_NG } ] },
   { id: "C006", character: "クレーマー", prompt: "レジ打ち遅すぎ！何年やってんの？",
     options: [
       { text: "お待たせしてすみません！急ぎつつ、打ち間違いのないように進めます", rate: "MAIN", reaction: "……おう、間違えるなよ", deathReason: "急ぐのか丁寧にやるのかどっちだ！" },
-      { text: "3年です。でもお客様の前だと緊張して、1年目に戻っちゃうんです", rate: 40, reaction: "……なんだそれ。早くしろよ", deathReason: "俺のせいで緊張してるって言いたいのか！？" },
-      { text: "正確さを優先しておりまして、もう少々お待ちください", rate: 10, reaction: "……正確ならいいけどよ", deathReason: "遅い上に言い訳か！正確さと速さは両立しろ！" },
+      { text: "3年です。でもお客様の前だと緊張しちゃって、手だけ1年目に戻っちゃうんです", rate: 40, reaction: "……なんだそれ。早くしろよ", deathReason: "俺のせいで緊張してるって言いたいのか！？" },
+      { text: "申し訳ございません、打ち間違いがないよう正確さを優先しておりまして、もう少々お待ちください", rate: 10, reaction: "……正確ならいいけどよ", deathReason: "遅い上に言い訳か！正確さと速さは両立しろ！" },
       { text: "お客様が来るまでは速かったんですけどね", rate: 0, deathReason: "俺のせいだって言うのか！名札見せろ！" } ] },
   { id: "C007", character: "クレーマー", prompt: "電話で言ってたことと違うじゃないか！誰が言ったんだ！",
     options: [
       { text: "ご迷惑をおかけしました。電話でのご案内どおりに対応します。内容を教えていただけますか", rate: "MAIN", reaction: "……分かった。ちゃんと聞けよ", deathReason: "何回同じ説明させるんだ！電話でも話したんだよ！" },
       { text: "誰が言ったかより、電話でどう言われたかを教えてください", rate: 40, reaction: "……まあいい、言うぞ", deathReason: "誰が言ったかが大事なんだよ！身内をかばう気か！" },
-      { text: "電話と店頭のご案内が異なる場合は、店頭のご案内が優先となります", rate: 10, reaction: "……そういう決まりなら仕方ないか", deathReason: "決まりなんか知るか！電話で言われたことが全てだ！" },
-      { text: "電話担当に確認してまいります", rate: 0, deathReason: ESCAPE_NG } ] },
+      { text: "恐れ入りますが、お電話と店頭のご案内が異なる場合は、店頭のご案内が優先となっております", rate: 10, reaction: "……そういう決まりなら仕方ないか", deathReason: "決まりなんか知るか！電話で言われたことが全てだ！" },
+      { text: "大変申し訳ございません。担当の者が不在のため、電話担当に確認してまいります。少々お待ちください", rate: 0, deathReason: ESCAPE_NG } ] },
   { id: "C008", character: "クレーマー", prompt: "なんで私だけ順番飛ばされたの！？",
     options: [
       { text: "大変申し訳ありません、こちらの不手際です。次のお席に最優先でご案内します", rate: "MAIN", reaction: "……分かればいいのよ", deathReason: "『次のお席』って、まだ待たせる気！？" },
-      { text: "えっ、お客様ほどの方を見落とすなんて……今すぐ一番いい席にご案内します", rate: 40, reaction: "……あら、分かってるじゃない", deathReason: "一番いい席って、エアコンの真下じゃない！寒いのよ！" },
-      { text: "前の方はご予約のお客様でして、飛ばしたわけではないんです", rate: 10, reaction: "……予約なら仕方ないわね", deathReason: "予約制なら最初に言いなさいよ！" },
-      { text: "飛ばしたくなる雰囲気だったので", rate: 0, deathReason: "雰囲気って何よ！私の何が悪いのよ！" } ] },
+      { text: "えっ、お客様ほどの方を見落とすなんて……大変失礼しました、今すぐ一番いい席にご案内します", rate: 40, reaction: "……あら、分かってるじゃない", deathReason: "一番いい席って、エアコンの真下じゃない！寒いのよ！" },
+      { text: "大変失礼いたしました。前の方はご予約のお客様でして、飛ばしたわけではないんです", rate: 10, reaction: "……予約なら仕方ないわね", deathReason: "予約制なら最初に言いなさいよ！" },
+      { text: "大変申し訳ありません。正直に申し上げると、つい飛ばしたくなる雰囲気だったので", rate: 0, deathReason: "雰囲気って何よ！私の何が悪いのよ！" } ] },
   { id: "C009", character: "クレーマー", prompt: "マニュアル通りの対応しかできないの？",
     options: [
       { text: "失礼しました。ご要望をそのままお聞かせください。マニュアルになくても、この場でやります", rate: "MAIN", reaction: "……じゃあ言うぞ。ちゃんとやれよ", deathReason: "『この場で』って、できなかったらどうするんだ！" },
@@ -103,14 +103,14 @@ const CONST_QUESTIONS = [
     options: [
       { text: "使えず申し訳ありません。代わりに今日使える割引をお付けしますね", rate: "MAIN", reaction: "……あるなら最初から出しなさいよ", deathReason: "代わりじゃ嫌なの！このクーポンを使いたいのよ！" },
       { text: "このクーポン、たぶん私より先輩です。敬意を払って使える割引を探しますね", rate: 40, reaction: "……何それ。あるなら早く出して", deathReason: "古いって言いたいの！？物持ちがいいって褒めなさいよ！" },
-      { text: "こちらは対象外の商品となっております", rate: 10, reaction: "……じゃあ対象のを買うわよ", deathReason: "対象外って何よ！私が対象外って言われてるみたいじゃない！" },
+      { text: "申し訳ございません、こちらのクーポンは対象外の商品となっておりまして", rate: 10, reaction: "……じゃあ対象のを買うわよ", deathReason: "対象外って何よ！私が対象外って言われてるみたいじゃない！" },
       { text: "クーポンに頼る生活なんですね", rate: 0, deathReason: "人の生活に口出ししないでよ！失礼にもほどがあるわ！" } ] },
   { id: "C011", character: "クレーマー", prompt: "お釣り少ないんだけど！！",
     options: [
       { text: "大変申し訳ありません！不足分をすぐにお返しします。おいくら足りませんでしたか", rate: "MAIN", reaction: "……10円よ。次から気をつけて", deathReason: "いくらかなんて自分で数えなさいよ！客にやらせる気！？" },
       { text: "えっ！では今ここでレジを全部数えます。一緒に見ててください", rate: 40, reaction: "……ちゃんと数えなさいよ", deathReason: "今から全部数える気！？後ろの人の時間も考えなさいよ！" },
-      { text: "防犯カメラで確認すれば、すぐはっきりしますので", rate: 10, reaction: "……そうね、はっきりさせましょう", deathReason: "カメラ！？私が嘘ついてるって疑ってるの！？" },
-      { text: "いや、ちゃんと渡しましたけど", rate: 0, deathReason: "絶対少なかったわよ！謝りもしないの！？" } ] },
+      { text: "大変失礼しました。防犯カメラで確認すれば、すぐにはっきりしますので少々お待ちください", rate: 10, reaction: "……そうね、はっきりさせましょう", deathReason: "カメラ！？私が嘘ついてるって疑ってるの！？" },
+      { text: "いや、こちらではちゃんとお渡ししたはずなんですけど……もう一度確認されましたか？", rate: 0, deathReason: "絶対少なかったわよ！謝りもしないの！？" } ] },
   { id: "C012", character: "クレーマー", prompt: "温めますかって聞かないの？普通聞くでしょ？",
     options: [
       { text: "失礼いたしました！お声がけが漏れていました。すぐ温めますね", rate: "MAIN", reaction: "……おう、温めて", deathReason: "今さら温めるな！最初に聞けって言ってんだよ！" },
@@ -128,11 +128,11 @@ const CONST_QUESTIONS = [
       { text: "怖い思いをさせてすみません。お帰りの際は、私が外で誘導します", rate: "MAIN", reaction: "……じゃあ頼むわよ", deathReason: "誘導なんかいらないわよ！私の運転を信用してないの！？" },
       { text: "ですよね！私も毎朝ヒヤヒヤしてます。本部に一緒に文句言いましょう", rate: 40, reaction: "……あんたも大変ね", deathReason: "店員と一緒にしないで！私の運転はあなたより上手いのよ！" },
       { text: "広めの区画が奥にございますので、次回はそちらをご利用ください", rate: 10, reaction: "……奥ね。覚えとくわ", deathReason: "次回！？今の話をしてるのよ！" },
-      { text: "本部に確認しておきます", rate: 0, deathReason: ESCAPE_NG } ] },
+      { text: "貴重なご意見ありがとうございます。本部に確認のうえ、改善を検討させていただきます", rate: 0, deathReason: ESCAPE_NG } ] },
   { id: "C015", character: "クレーマー", prompt: "ネットに書くからね！こんな店潰してやる！",
     options: [
       { text: "本当に申し訳ありません。何がご不快だったか、私に直接聞かせていただけませんか", rate: "MAIN", reaction: "……じゃあ聞いてもらおうか", deathReason: "口止めする気か！書かれたくないだけだろう！" },
-      { text: "ご不快な思いをさせてしまい、本当に申し訳ありません", rate: 40, reaction: "……まあ、謝るならいい", deathReason: "謝って済むと思うな！何が悪かったか分かってないだろ！" },
+      { text: "ご不快な思いをさせてしまい、本当に、本当に申し訳ありません。心からお詫び申し上げます", rate: 40, reaction: "……まあ、謝るならいい", deathReason: "謝って済むと思うな！何が悪かったか分かってないだろ！" },
       { text: "ご意見として受け止めます。書かれるのはお客様の自由ですので", rate: 10, reaction: "……ふん、度胸あるな", deathReason: "自由だと！？開き直りやがって！絶対書いてやる！" },
       { text: "星5でお願いしますね♪", rate: 0, deathReason: "ふざけるな！星1だ！いや星0だ！" } ] },
   { id: "C016", character: "クレーマー", prompt: "なんでこの値段なの？隣の店はもっと安かったよ！",
@@ -146,19 +146,19 @@ const CONST_QUESTIONS = [
   { id: "G001", character: "彼女", prompt: "ねえ、私が今なんで怒ってるかわかる？",
     options: [
       { text: "正直わかってない。でも、わかってないまま謝るのは違うから、ちゃんと聞かせて", rate: "MAIN", reaction: "……そういうとこは分かってるんだ", deathReason: "聞かせてじゃなくて考えてよ！" },
-      { text: "ごめん。何が悪かったか教えてくれる？", rate: 40, reaction: "……じゃあ言うけど、ちゃんと聞いてね", deathReason: "何が悪かったか分からないのに謝ったの！？" },
-      { text: "昨日、LINE返すの遅かったこと……？", rate: 10, reaction: "……それもあるけど。まあいいや", deathReason: "それじゃない！しかも遅かった自覚あるんだ！？" },
+      { text: "ごめん。何が悪かったのかちゃんと分かりたいし、もう繰り返したくないから、教えてくれる？", rate: 40, reaction: "……じゃあ言うけど、ちゃんと聞いてね", deathReason: "何が悪かったか分からないのに謝ったの！？" },
+      { text: "もしかして、昨日LINE返すのが遅かったこと……？あれは本当にごめん、言い訳しない", rate: 10, reaction: "……それもあるけど。まあいいや", deathReason: "それじゃない！しかも遅かった自覚あるんだ！？" },
       { text: "え、怒ってるの？", rate: 0, deathReason: "見れば分かるでしょ！？私のこと見てないの！？" } ] },
   { id: "G002", character: "彼女", prompt: "仕事と私、どっちが大事なの？",
     options: [
       { text: "君。だから今週末は仕事を入れない。どこ行きたい？", rate: "MAIN", reaction: "……じゃあ海。約束ね", deathReason: "今週末だけ！？来週からはまた仕事優先なの！？" },
-      { text: "もちろん君だよ。だから仕事も頑張れるんだ", rate: 40, reaction: "……ならいいけど", deathReason: "結局仕事の話になってるじゃん！" },
+      { text: "もちろん君だよ。君がいるから、仕事も頑張れてるんだと思う", rate: 40, reaction: "……ならいいけど", deathReason: "結局仕事の話になってるじゃん！" },
       { text: "比べるものじゃないよ", rate: 10, reaction: "……まあ、そうだよね", deathReason: "逃げないで！どっちか選んでって言ってるの！" },
       { text: "今それ聞く？締め切り前なんだけど", rate: 0, deathReason: "ほら、仕事の方が大事なんじゃん！！" } ] },
   { id: "G003", character: "彼女", prompt: "別に怒ってないけど？",
     options: [
       { text: "そっか。じゃあ、怒ってない君の隣に座っててもいい？", rate: "MAIN", reaction: "……勝手にすれば", deathReason: "なんでそんなに離れて座るの！？5cm遠いんだけど！" },
-      { text: "そっか。でも何かあったら、いつでも話してね", rate: 40, reaction: "……うん", deathReason: "『でも』って何！？怒ってるって決めつけないで！" },
+      { text: "そっか。でも何かあったら、無理しないでいつでも話してね", rate: 40, reaction: "……うん", deathReason: "『でも』って何！？怒ってるって決めつけないで！" },
       { text: "怒ってる顔してるよ？", rate: 10, reaction: "……してないし。ちょっとだけ", deathReason: "顔のこと言わないで！どうせ変な顔って思ってるんでしょ！" },
       { text: "よかった！じゃあゲームするね", rate: 0, deathReason: "本当にゲームする！？信じられない！！" } ] },
   { id: "G004", character: "彼女", prompt: "この服とこの服、どっちがいいと思う？",
@@ -171,13 +171,13 @@ const CONST_QUESTIONS = [
     options: [
       { text: "言わなくても伝わってると思って甘えてた。ごめん、好きだよ", rate: "MAIN", reaction: "……ばか。じゃあ毎日言ってね", deathReason: "甘えてたって、私が言わなかったらずっと言わなかったってこと！？" },
       { text: "ごめん。大好きだよ", rate: 40, reaction: "……うん。知ってる", deathReason: "言わされてる感がすごい！私が言ったから言ったんでしょ！" },
-      { text: "毎日思ってるよ", rate: 10, reaction: "……思ってるなら言ってよ", deathReason: "思ってるだけじゃ伝わらないの！テレパシーじゃないんだから！" },
-      { text: "言わなくても分かるでしょ", rate: 0, deathReason: "分かんないから言ってるの！昭和の親父なの！？" } ] },
+      { text: "言葉にはしてなかったけど、毎日ちゃんと好きだって思ってるよ", rate: 10, reaction: "……思ってるなら言ってよ", deathReason: "思ってるだけじゃ伝わらないの！テレパシーじゃないんだから！" },
+      { text: "好きじゃなかったら一緒にいないし、言わなくても分かるでしょ", rate: 0, deathReason: "分かんないから言ってるの！昭和の親父なの！？" } ] },
   { id: "G006", character: "彼女", prompt: "あの子のインスタ、なんでいいねしてるの？",
     options: [
       { text: "深く考えずに押してた。君が嫌なら、もう押さない", rate: "MAIN", reaction: "……分かってくれたならいい", deathReason: "深く考えずにって、無意識に見てるってことでしょ！" },
-      { text: "共通の友達だから、付き合いで押しただけだよ", rate: 40, reaction: "……そっか、付き合いね", deathReason: "付き合いなら私の気持ちはどうでもいいの！？" },
-      { text: "流れてきたから押しただけだよ", rate: 10, reaction: "……ふーん。ならいいけど", deathReason: "『だけ』って何！？軽い気持ちで押したってこと！？" },
+      { text: "共通の友達だから、付き合いで押しただけだよ。深い意味はないよ", rate: 40, reaction: "……そっか、付き合いね", deathReason: "付き合いなら私の気持ちはどうでもいいの！？" },
+      { text: "ただ流れてきたから押しただけだよ。中身はちゃんと見てない", rate: 10, reaction: "……ふーん。ならいいけど", deathReason: "『だけ』って何！？軽い気持ちで押したってこと！？" },
       { text: "かわいかったから", rate: 0, deathReason: "は！？私の前でよくそれ言えるね！？" } ] },
   { id: "G007", character: "彼女", prompt: "今日、何の日か覚えてる？",
     options: [
@@ -188,20 +188,20 @@ const CONST_QUESTIONS = [
   { id: "G008", character: "彼女", prompt: "私って重い？",
     options: [
       { text: "重いと思ったことはないよ。頼ってくれる方が嬉しい", rate: "MAIN", reaction: "……そっか。よかった", deathReason: "『頼ってくれる方が』って、普段の私が頼りないってこと！？" },
-      { text: "全然。大事にしてくれて嬉しいよ", rate: 40, reaction: "……ほんと？ならいいけど", deathReason: "即答なのが逆に怪しい！本当はちょっと思ってるでしょ！" },
-      { text: "ちょうどいいと思う", rate: 10, reaction: "……ちょうどいいなら、いっか", deathReason: "ちょうどいいって、ちょっとは重いってことじゃん！" },
+      { text: "全然。むしろそれだけ大事にしてくれてるんだなって、嬉しいよ", rate: 40, reaction: "……ほんと？ならいいけど", deathReason: "即答なのが逆に怪しい！本当はちょっと思ってるでしょ！" },
+      { text: "重いとかじゃなくて、俺にとってはちょうどいいと思うよ", rate: 10, reaction: "……ちょうどいいなら、いっか", deathReason: "ちょうどいいって、ちょっとは重いってことじゃん！" },
       { text: "体重の話？", rate: 0, deathReason: "最低！！そういう話じゃない！！" } ] },
   { id: "G009", character: "彼女", prompt: "既読ついてから返信まで2時間かかったよね？",
     options: [
       { text: "既読だけ付けて放置したのは良くなかった。次からは一言だけでもすぐ返す", rate: "MAIN", reaction: "……一言でいいからね", deathReason: "一言って、私には一言で十分ってこと！？" },
-      { text: "ごめん、会議中で返せなかった", rate: 40, reaction: "……そっか。お疲れさま", deathReason: "会議中なのに既読はつけたの！？見てたってことじゃん！" },
+      { text: "ごめん、会議中でちゃんと返せなかった。終わってからすぐ返そうと思ってたんだ", rate: 40, reaction: "……そっか。お疲れさま", deathReason: "会議中なのに既読はつけたの！？見てたってことじゃん！" },
       { text: "スタンプは送ったよね？", rate: 10, reaction: "……まあ、送ってはくれたけど", deathReason: "スタンプは返信じゃない！言葉で返して！" },
       { text: "既読つけてるだけマシでしょ", rate: 0, deathReason: "開き直らないで！！" } ] },
   { id: "G010", character: "彼女", prompt: "どうせ私のことなんてどうでもいいんでしょ",
     options: [
       { text: "どうでもよくないよ。（スマホを置いて）今は君の話だけ聞く", rate: "MAIN", reaction: "……じゃあ聞いて", deathReason: "『今は』って、いつもは聞いてないってこと！？" },
-      { text: "そんなことないよ。何かあった？話聞くよ", rate: 40, reaction: "……うん。ちょっと聞いて", deathReason: "スマホ持ったまま言わないで！" },
-      { text: "またそれ？", rate: 10, reaction: "……ごめん、また言っちゃった", deathReason: "『また』って何！？私がいつも言ってるみたいじゃん！" },
+      { text: "そんなことないよ。何かあった？ちゃんと話聞くから、言ってみて", rate: 40, reaction: "……うん。ちょっと聞いて", deathReason: "スマホ持ったまま言わないで！" },
+      { text: "またそれ？前にも言ったけど、どうでもいいなんて思ってないよ", rate: 10, reaction: "……ごめん、また言っちゃった", deathReason: "『また』って何！？私がいつも言ってるみたいじゃん！" },
       { text: "うん（スマホを見ながら）", rate: 0, deathReason: "スマホ見ながら『うん』って何！？肯定したよね今！？" } ] },
   { id: "G011", character: "彼女", prompt: "ご飯？どこでもいいよ",
     options: [
@@ -212,7 +212,7 @@ const CONST_QUESTIONS = [
   { id: "G012", character: "彼女", prompt: "元カノとはどこ行ったの？",
     options: [
       { text: "正直あんまり覚えてない。君と行った場所の方が、全部はっきり覚えてる", rate: "MAIN", reaction: "……うまいこと言うじゃん", deathReason: "全部って言ったね？じゃあ3回目のデートの場所は？" },
-      { text: "あんまり覚えてないな。それより今度ここ行かない？", rate: 40, reaction: "……行く", deathReason: "話そらしたよね今！？何か隠してるでしょ！" },
+      { text: "うーん、あんまり覚えてないな。それより今度、君が行きたがってたここ行かない？", rate: 40, reaction: "……行く", deathReason: "話そらしたよね今！？何か隠してるでしょ！" },
       { text: "普通に水族館とか……", rate: 10, reaction: "……ふーん。じゃあ私とは別のとこね", deathReason: "この前私と行った水族館も、元カノと行った場所なの！？" },
       { text: "ちょうど今いるこのカフェ", rate: 0, deathReason: "なんでそんな場所に連れてくるの！？最低！" } ] },
   { id: "G013", character: "彼女", prompt: "私が太ったと思ってるでしょ",
@@ -225,12 +225,12 @@ const CONST_QUESTIONS = [
     options: [
       { text: "様子が違うのは気付いてた。聞くタイミングを探してた。どうしたの？", rate: "MAIN", reaction: "……気付いてたんだ。実はね", deathReason: "気付いてたならすぐ聞いてよ！" },
       { text: "ごめん、気付けなかった。どうしたの？", rate: 40, reaction: "……ちゃんと気付いてよね", deathReason: "気付けなかったって、私に興味ないってことでしょ！" },
-      { text: "言ってくれなきゃわからないよ", rate: 10, reaction: "……そうだね。ごめん、言うね", deathReason: "言わなくても分かってほしいの！それが察するってことでしょ！" },
-      { text: "え、何も言ってないよね？", rate: 0, deathReason: "言ってないけど聞いてほしかったの！！" } ] },
+      { text: "ごめん。でも正直、言ってくれなきゃわからないよ。俺はエスパーじゃないし", rate: 10, reaction: "……そうだね。ごめん、言うね", deathReason: "言わなくても分かってほしいの！それが察するってことでしょ！" },
+      { text: "え、ちょっと待って。今日なにか言ってたっけ？俺の記憶だと何も言ってないよね？", rate: 0, deathReason: "言ってないけど聞いてほしかったの！！" } ] },
   { id: "G015", character: "彼女", prompt: "友達の彼氏はサプライズしてくれるんだって",
     options: [
       { text: "……今の話、聞かなかったことにしていい？準備があるから", rate: "MAIN", reaction: "……え、何？楽しみにしてるね", deathReason: "準備って何！？期待させといて何もなかったら許さないからね！" },
-      { text: "そうなんだ。俺ももっと君を喜ばせたいな", rate: 40, reaction: "……期待してる", deathReason: "言っちゃったらサプライズじゃないじゃん！" },
+      { text: "そうなんだ。いいね、俺ももっと君を喜ばせられるように頑張りたいな", rate: 40, reaction: "……期待してる", deathReason: "言っちゃったらサプライズじゃないじゃん！" },
       { text: "うちはうち、よそはよそ", rate: 10, reaction: "……まあ、そうだけど", deathReason: "お母さんみたいなこと言わないで！" },
       { text: "じゃあその彼氏と付き合えば？", rate: 0, deathReason: "なんでそうなるの！？最低！！" } ] },
   { id: "G016", character: "彼女", prompt: "ねえ、聞いてる？",
@@ -244,15 +244,15 @@ const CONST_QUESTIONS = [
   { id: "M001", character: "母親", prompt: "あんた、いつまで寝てんの！",
     options: [
       { text: "ごめん、起きた！布団たたんでから、すぐ下りる", rate: "MAIN", reaction: "……早く来なさい。ご飯冷めるわよ", deathReason: "布団なんか後でいいから早く来なさい！" },
-      { text: "ごめん、今起きる！", rate: 40, reaction: "……早くしなさいよ", deathReason: "『今起きる』って言いながら布団から出てないじゃない！" },
+      { text: "ごめんごめん、今起きる！もう目は覚めてるから、すぐ行く", rate: 40, reaction: "……早くしなさいよ", deathReason: "『今起きる』って言いながら布団から出てないじゃない！" },
       { text: "今日は休みだから……", rate: 10, reaction: "……休みでもほどほどにしなさい", deathReason: "休みでも起きる！それがこの家のルール！" },
       { text: "起こさないでって言ったじゃん", rate: 0, deathReason: "起こしてもらって文句言うの！？もう二度と起こさない！" } ] },
   { id: "M002", character: "母親", prompt: "部屋片付けなさいって何回言わせるの！",
     options: [
       { text: "ごめん。今から30分で片付けるから、終わったら見に来て", rate: "MAIN", reaction: "……30分ね。見に行くからね", deathReason: "30分もかかるほど散らかしてたの！？" },
       { text: "ごめん、今からやるね", rate: 40, reaction: "……今からね。見てるからね", deathReason: "『今から』は昨日も聞いた！" },
-      { text: "どこに何があるかは分かってるから", rate: 10, reaction: "……分かってるならいいけど", deathReason: "分かってても汚いの！見てるお母さんが嫌なの！" },
-      { text: "じゃあ言わなきゃいいじゃん", rate: 0, deathReason: "言わなきゃやらないでしょ！なんて口の利き方なの！" } ] },
+      { text: "どこに何があるかは全部分かってるから、これはこれで片付いてるんだよ", rate: 10, reaction: "……分かってるならいいけど", deathReason: "分かってても汚いの！見てるお母さんが嫌なの！" },
+      { text: "そんなに言うなら、もう最初から言わなきゃいいじゃん。毎回同じこと言ってるし", rate: 0, deathReason: "言わなきゃやらないでしょ！なんて口の利き方なの！" } ] },
   { id: "M003", character: "母親", prompt: "お母さんの話、聞いてないでしょ！",
     options: [
       { text: "ごめん。スマホしまった。もう一回最初から聞かせて", rate: "MAIN", reaction: "……じゃあ最初から言うわよ", deathReason: "最初からって、全然聞いてなかったってことじゃない！" },
@@ -262,8 +262,8 @@ const CONST_QUESTIONS = [
   { id: "M004", character: "母親", prompt: "誰のおかげで大きくなったと思ってるの！",
     options: [
       { text: "お母さんと、お母さんのご飯と、お母さんの小言のおかげ", rate: "MAIN", reaction: "……小言は余計よ。でもまあ、そうね", deathReason: "小言って何よ！愛情でしょ、愛情！" },
-      { text: "お母さんのおかげです。いつもありがとう", rate: 40, reaction: "……分かってるならいいのよ", deathReason: "急に感謝されても気持ち悪いわよ！何か企んでるでしょ！" },
-      { text: "お父さんも頑張ってたよ", rate: 10, reaction: "……まあ、お父さんもね", deathReason: "お父さんが何したのよ！オムツ1回替えただけでしょ！" },
+      { text: "お母さんのおかげです。言葉にしてなかったけど、いつも本当にありがとう", rate: 40, reaction: "……分かってるならいいのよ", deathReason: "急に感謝されても気持ち悪いわよ！何か企んでるでしょ！" },
+      { text: "お母さんのおかげもあるけど、お父さんも陰で頑張ってたよ", rate: 10, reaction: "……まあ、お父さんもね", deathReason: "お父さんが何したのよ！オムツ1回替えただけでしょ！" },
       { text: "牛乳のおかげ", rate: 0, deathReason: "ふざけるんじゃないの！！牛乳代も払ったのはお母さんよ！" } ] },
   { id: "M005", character: "母親", prompt: "せっかく作ったのに残すの！？",
     options: [
@@ -274,15 +274,15 @@ const CONST_QUESTIONS = [
   { id: "M006", character: "母親", prompt: "あんたのためを思って言ってるのよ！",
     options: [
       { text: "知ってる。だから毎回ちゃんと効いてる。……すぐには直らないけど", rate: "MAIN", reaction: "……すぐ直しなさいよ。もう", deathReason: "効いてるならすぐ直しなさいよ！" },
-      { text: "うん、分かってる。ありがとう", rate: 40, reaction: "……分かってるならいいのよ", deathReason: "分かってるならなんでやらないの！" },
+      { text: "うん、ちゃんと分かってる。いつも自分のことを考えてくれて、本当にありがとう", rate: 40, reaction: "……分かってるならいいのよ", deathReason: "分かってるならなんでやらないの！" },
       { text: "でも、自分で決めたいんだ", rate: 10, reaction: "……そう。じゃあ責任持ちなさいよ", deathReason: "『でも』って何よ！お母さんの話は聞けないって言うの！？" },
       { text: "自分のためでしょ", rate: 0, deathReason: "なんてこと言うの！？お母さんがどれだけ……！" } ] },
   { id: "M007", character: "母親", prompt: "なんで連絡しないの！心配したでしょ！",
     options: [
       { text: "心配かけてごめん。これからは遅くなる時、家を出る前に一言送る", rate: "MAIN", reaction: "……約束よ", deathReason: "出る前だけ？途中でも連絡しなさい！" },
-      { text: "心配かけてごめん。次から必ず連絡する", rate: 40, reaction: "……約束よ", deathReason: "『必ず』って前も言ったわよね！" },
-      { text: "スマホの電池が切れちゃってて", rate: 10, reaction: "……充電くらいしなさい", deathReason: "モバイルバッテリー持たせたでしょ！どこやったの！" },
-      { text: "既読はつけたじゃん", rate: 0, deathReason: "既読は返事じゃないの！" } ] },
+      { text: "心配かけて本当にごめん。次からは必ず、何があっても連絡するようにする", rate: 40, reaction: "……約束よ", deathReason: "『必ず』って前も言ったわよね！" },
+      { text: "ごめん、スマホの電池が切れちゃってて、連絡したくてもできなかったんだ", rate: 10, reaction: "……充電くらいしなさい", deathReason: "モバイルバッテリー持たせたでしょ！どこやったの！" },
+      { text: "ちゃんと既読はつけたじゃん。少なくとも生きてるのは分かったでしょ", rate: 0, deathReason: "既読は返事じゃないの！" } ] },
   { id: "M008", character: "母親", prompt: "近所の〇〇ちゃん、もう結婚したんだって",
     options: [
       { text: "そうなんだ。……心配してくれてるのは分かってる。ちゃんと考えてるよ", rate: "MAIN", reaction: "……考えてるならいいのよ", deathReason: "考えてるだけじゃダメなの！" },
@@ -292,13 +292,13 @@ const CONST_QUESTIONS = [
   { id: "M009", character: "母親", prompt: "なんでお母さんばっかり家事しなきゃいけないの！",
     options: [
       { text: "ごめん。今日から皿洗いとお風呂掃除は自分がやる。やり方教えて", rate: "MAIN", reaction: "……じゃあ今から教えるわよ", deathReason: "やり方も知らないで今まで生きてきたの！？" },
-      { text: "ごめん、今日から洗い物は担当する", rate: 40, reaction: "……じゃあお願いね", deathReason: "洗い方が違う！スポンジはそっちじゃない！" },
-      { text: "何か手伝おうか？", rate: 10, reaction: "……じゃあ洗濯物たたんで", deathReason: "『手伝う』って何よ！あんたの家でもあるのよ！" },
+      { text: "ごめん、気付いてなかった。今日から洗い物は全部、自分が担当するから", rate: 40, reaction: "……じゃあお願いね", deathReason: "洗い方が違う！スポンジはそっちじゃない！" },
+      { text: "ごめん、気付かなかった。何か手伝えることがあったら、手伝おうか？", rate: 10, reaction: "……じゃあ洗濯物たたんで", deathReason: "『手伝う』って何よ！あんたの家でもあるのよ！" },
       { text: "食洗機買えば？", rate: 0, deathReason: "そういう問題じゃないの！！" } ] },
   { id: "M010", character: "母親", prompt: "その服なに？だらしない！",
     options: [
       { text: "家用だからね。誰か来た時と出かける時は、ちゃんと着替える", rate: "MAIN", reaction: "……それならいいわ", deathReason: "家族の前ならだらしなくていいってこと！？" },
-      { text: "着替えてくるね", rate: 40, reaction: "……そっちの方がいいわね", deathReason: "着替えたのも変！もっとマシなのないの！" },
+      { text: "ごめん、すぐ着替えてくるね。ちゃんとした服、ちょっと探してくる", rate: 40, reaction: "……そっちの方がいいわね", deathReason: "着替えたのも変！もっとマシなのないの！" },
       { text: "家だからいいじゃん", rate: 10, reaction: "……家でもちゃんとしなさい", deathReason: "宅配便が来たらどうするの！お母さんが恥ずかしいのよ！" },
       { text: "お母さんが買ってきた服だよ", rate: 0, deathReason: "お母さんのセンスが悪いって言いたいの！？" } ] },
   { id: "M011", character: "母親", prompt: "ゲームばっかりしてないで勉強しなさい！",
@@ -310,7 +310,7 @@ const CONST_QUESTIONS = [
   { id: "M012", character: "母親", prompt: "お母さんの気持ちなんて分からないでしょ！",
     options: [
       { text: "全部は分からない。でも今日のお母さんが疲れてるのは分かる。何か手伝わせて", rate: "MAIN", reaction: "……じゃあ肩でも揉みなさい", deathReason: "疲れてるって、老けたって言いたいの！？" },
-      { text: "分かりたいと思ってる。話して", rate: 40, reaction: "……じゃあ聞いてくれる？", deathReason: "分かりたいって、今は分かってないってことじゃない！" },
+      { text: "分かりたいと思ってる。すぐには無理かもしれないけど、ちゃんと聞くから話してほしい", rate: 40, reaction: "……じゃあ聞いてくれる？", deathReason: "分かりたいって、今は分かってないってことじゃない！" },
       { text: "分かるよ", rate: 10, reaction: "……ほんとに？", deathReason: "そんな簡単に分かられてたまるもんですか！" },
       { text: "分かんない", rate: 0, deathReason: "少しは分かろうとしなさいよ！！" } ] },
   { id: "M013", character: "母親", prompt: "電気つけっぱなし！何回言えば分かるの！",
@@ -322,19 +322,19 @@ const CONST_QUESTIONS = [
   { id: "M014", character: "母親", prompt: "今の言い方なに？",
     options: [
       { text: "ごめん。イライラしてて八つ当たりした。お母さんのせいじゃない", rate: "MAIN", reaction: "……分かればいいのよ。何かあったの？", deathReason: "八つ当たりって、お母さんはサンドバッグなの！？" },
-      { text: "ごめん、言い方が悪かった", rate: 40, reaction: "……分かればいいのよ", deathReason: "言い方だけ！？中身も悪かったでしょ！" },
-      { text: "普通に言っただけだよ", rate: 10, reaction: "……そう？ならいいけど", deathReason: "それが普通なら、普段からそう思ってるってことね！" },
+      { text: "ごめん、さっきの言い方は本当に悪かった。そんなつもりじゃなかったんだ", rate: 40, reaction: "……分かればいいのよ", deathReason: "言い方だけ！？中身も悪かったでしょ！" },
+      { text: "そんなつもりはなくて、自分では普通に言っただけのつもりだったんだよ", rate: 10, reaction: "……そう？ならいいけど", deathReason: "それが普通なら、普段からそう思ってるってことね！" },
       { text: "そっちの言い方こそ何？", rate: 0, deathReason: "親に向かってなんて口の利き方なの！" } ] },
   { id: "M015", character: "母親", prompt: "部屋に勝手に入るなって何よ！親でしょ！",
     options: [
       { text: "嫌いだからじゃないよ。一声かけてくれたら、ちゃんとドア開けるから", rate: "MAIN", reaction: "……分かったわよ、ノックする", deathReason: "ドアを開けるか決めるのはあんたなの！？" },
       { text: "ノックしてくれたら嬉しいな", rate: 40, reaction: "……覚えてたらね", deathReason: "自分の家で親がノックしなきゃいけないの！？" },
-      { text: "プライバシーってものがあるんだよ", rate: 10, reaction: "……そういう年頃ね", deathReason: "プライバシーなんて言葉、どこで覚えてきたの！" },
+      { text: "ごめん、でも一人になりたい時もあるし、プライバシーってものがあるんだよ", rate: 10, reaction: "……そういう年頃ね", deathReason: "プライバシーなんて言葉、どこで覚えてきたの！" },
       { text: "親でも他人だよ", rate: 0, deathReason: "他人！？今まで育ててきたのに！？" } ] },
   { id: "M016", character: "母親", prompt: "もういい！お母さん出ていくから！",
     options: [
       { text: "行かないで。何が一番嫌だったか教えて。そこから直す", rate: "MAIN", reaction: "……分かったわよ。座りなさい", deathReason: "『そこから』って、他にも直すところがあるの分かってるのね！？" },
-      { text: "待って、ごめん。ちゃんと話そう", rate: 40, reaction: "……分かったわよ", deathReason: "引き止めるのが遅い！本当は出ていってほしいんでしょ！" },
+      { text: "待って、本当にごめん。お願いだから、座ってちゃんと話そう", rate: 40, reaction: "……分かったわよ", deathReason: "引き止めるのが遅い！本当は出ていってほしいんでしょ！" },
       { text: "落ち着いて、ね？", rate: 10, reaction: "……落ち着いてるわよ", deathReason: "落ち着いてるわよ！！落ち着いてないのはそっちでしょ！！" },
       { text: "いってらっしゃい", rate: 0, deathReason: "本当に止めないのね！？" } ] },
 
@@ -342,15 +342,15 @@ const CONST_QUESTIONS = [
   { id: "O001", character: "鬼嫁", prompt: "私の誕生日、何くれるつもり？……まさか忘れてないよね？（誕生日は昨日）",
     options: [
       { text: "忘れてない。昨日は渡す勇気が出なかった。……遅れてごめん、今渡す", rate: "MAIN", reaction: "……なんで昨日渡さないのよ。……ありがと", deathReason: "勇気ってなに！？私が怖いってこと！？" },
-      { text: "今日が本番だと思ってた！今から一緒に選びに行こう", rate: 40, reaction: "……仕方ないわね。高いやつね", deathReason: "昨日が誕生日だって分かってて言ってるの！？" },
-      { text: "サプライズで来週やる予定だったんだ", rate: 10, reaction: "……来週ね。期待してるから", deathReason: "来週！？誕生日を何だと思ってるの！" },
+      { text: "今日が本番だと思ってた！せっかくだから、今から一緒に一番いいのを選びに行こう", rate: 40, reaction: "……仕方ないわね。高いやつね", deathReason: "昨日が誕生日だって分かってて言ってるの！？" },
+      { text: "実はサプライズで、来週ちゃんとお祝いする予定だったんだ。だから今日は……", rate: 10, reaction: "……来週ね。期待してるから", deathReason: "来週！？誕生日を何だと思ってるの！" },
       { text: "え、昨日だったっけ？", rate: 0, deathReason: "鬼の誕生日を忘れるとは、いい度胸ね……" } ] },
   { id: "O002", character: "鬼嫁", prompt: "あんたの母親から電話あったんだけど。私と母親、どっちの味方？",
     options: [
       { text: "君の味方。母さんには俺から話す。君に直接は言わせない", rate: "MAIN", reaction: "……ちゃんと言ってよね", deathReason: "あんたが話すと、全部丸く収めて終わりにするでしょ！" },
-      { text: "どっちの味方とかじゃなくて、二人で話し合おう", rate: 40, reaction: "……あんたも同席するならね", deathReason: "私と母親を二人きりにする気！？地獄よ！" },
-      { text: "母さんも悪気はないんだよ", rate: 10, reaction: "……悪気がないのが一番タチ悪いのよ", deathReason: "やっぱり母親の味方なんじゃない！" },
-      { text: "母さんの言うことにも一理あるよ", rate: 0, deathReason: "一理！？その一理で私の人生を削るつもり！？" } ] },
+      { text: "どっちの味方とかじゃなくて、君と母さん、二人で一度ちゃんと話し合ってみよう", rate: 40, reaction: "……あんたも同席するならね", deathReason: "私と母親を二人きりにする気！？地獄よ！" },
+      { text: "君の気持ちも分かるけど、母さんも悪気はないんだよ、たぶん", rate: 10, reaction: "……悪気がないのが一番タチ悪いのよ", deathReason: "やっぱり母親の味方なんじゃない！" },
+      { text: "冷静に考えると、母さんの言うことにも一理あるとは思うよ", rate: 0, deathReason: "一理！？その一理で私の人生を削るつもり！？" } ] },
   { id: "O003", character: "鬼嫁", prompt: "今日、私が何回ため息ついたか数えてた？",
     options: [
       { text: "数えてない。でも3回目くらいから、何かあったんだろうなって思ってた", rate: "MAIN", reaction: "……7回よ。聞いてよね", deathReason: "3回目から気付いてて、ずっと黙ってたの！？" },
@@ -361,19 +361,19 @@ const CONST_QUESTIONS = [
     options: [
       { text: "正直、2割もやってない。今日から洗濯と皿洗いは全部やる", rate: "MAIN", reaction: "……やっと気付いたのね。続けなさいよ", deathReason: "2割『も』！？1割もやってないわよ！" },
       { text: "半分くらいはやってるつもりだけど……", rate: 40, reaction: "……つもり、ね。見てるからね", deathReason: "つもり！？そのつもりの差が戦争を生むのよ！" },
-      { text: "仕事してるから、家のことは任せてるつもり", rate: 10, reaction: "……任された覚えはないけど", deathReason: "私も仕事してるんだけど！？" },
-      { text: "8割はやってるでしょ", rate: 0, deathReason: "8割！？どこの世界線の話！？" } ] },
+      { text: "外で働いてる分、家のことは正直、君に任せちゃってるつもり", rate: 10, reaction: "……任された覚えはないけど", deathReason: "私も仕事してるんだけど！？" },
+      { text: "ゴミ出しも風呂掃除も俺がやってるし、正直8割はやってるでしょ", rate: 0, deathReason: "8割！？どこの世界線の話！？" } ] },
   { id: "O005", character: "鬼嫁", prompt: "私が髪切ったの、気付いた？",
     options: [
       { text: "気付いてた。前髪、少し短くして顔が明るく見える", rate: "MAIN", reaction: "……へえ、ちゃんと見てるじゃない", deathReason: "『明るく見える』って、前は暗かったってこと！？" },
       { text: "うん、似合ってるよ！", rate: 40, reaction: "……どこ切ったか分かってる？まあいいわ", deathReason: "どこを切ったか言ってみなさいよ！ほら言えない！" },
-      { text: "あ、ほんとだ。いつ切ったの？", rate: 10, reaction: "……3日前よ", deathReason: "3日前よ！3日間気付かなかったのね！" },
-      { text: "切った？変わってないけど", rate: 0, deathReason: "1cm切ったのよ！？1cmの愛情もないわけ！？" } ] },
+      { text: "あ、ほんとだ。言われて気付いた、ごめん。いつ切ったの？", rate: 10, reaction: "……3日前よ", deathReason: "3日前よ！3日間気付かなかったのね！" },
+      { text: "え、切った？毎日見てるけど、全然変わってないけど", rate: 0, deathReason: "1cm切ったのよ！？1cmの愛情もないわけ！？" } ] },
   { id: "O006", character: "鬼嫁", prompt: "なんでスマホ伏せて置いてるの？見られたらマズいものでもあるの？",
     options: [
       { text: "ないよ。見たいなら見ていい。（ロックを解除して渡す）", rate: "MAIN", reaction: "……別に見ないわよ。でも、ならいいわ", deathReason: "そんなにあっさり渡すなんて、消した後なんでしょ！" },
-      { text: "画面が光るのが嫌で、いつも伏せてるだけだよ", rate: 40, reaction: "……ふーん。まあいいわ", deathReason: "『いつも』って、いつも何か隠してるってことね！" },
-      { text: "疑うなんてひどいな", rate: 10, reaction: "……疑わせるようなことしないで", deathReason: "ひどいのはどっちよ！疑わせる方が悪いの！" },
+      { text: "画面が光るのが嫌で、昔からいつも伏せて置く癖があるだけだよ", rate: 40, reaction: "……ふーん。まあいいわ", deathReason: "『いつも』って、いつも何か隠してるってことね！" },
+      { text: "見られてマズいものなんて何もないよ。疑うなんてひどいな", rate: 10, reaction: "……疑わせるようなことしないで", deathReason: "ひどいのはどっちよ！疑わせる方が悪いの！" },
       { text: "プライバシーってものがあるでしょ", rate: 0, deathReason: "夫婦にプライバシーなんかないのよ！！" } ] },
   { id: "O007", character: "鬼嫁", prompt: "疲れた。……で、あんたは今日何してたの？",
     options: [
@@ -385,8 +385,8 @@ const CONST_QUESTIONS = [
     options: [
       { text: "プロポーズした店だから。あの時と同じ窓際の席を取った", rate: "MAIN", reaction: "……覚えてたのね。……ずるい", deathReason: "窓際って外から丸見えじゃない！泣いてるとこ見られたらどうするの！" },
       { text: "口コミで評判がよかったから", rate: 40, reaction: "……まあ、美味しいなら許す", deathReason: "記念日を口コミで決めたの！？私たちの思い出は！？" },
-      { text: "君が前に行きたいって言ってたから", rate: 10, reaction: "……言ったっけ。まあいいわ", deathReason: "それ言ったの、テレビで見た別の店の話よ！" },
-      { text: "予約が取れたのがここだけだった", rate: 0, deathReason: "妥協！？結婚記念日を妥協で済ませたの！？" } ] },
+      { text: "君が前に、あそこ行ってみたいって言ってたのを覚えてたから", rate: 10, reaction: "……言ったっけ。まあいいわ", deathReason: "それ言ったの、テレビで見た別の店の話よ！" },
+      { text: "正直に言うと、記念日の予約が取れたのがここだけだったんだよね", rate: 0, deathReason: "妥協！？結婚記念日を妥協で済ませたの！？" } ] },
   { id: "O009", character: "鬼嫁", prompt: "私、太った？……正直に言って。怒らないから",
     options: [
       { text: "俺は気にならない。君が気になるなら、一緒に歩く時間を作ろう", rate: "MAIN", reaction: "……じゃあ明日から一緒ね", deathReason: "『俺は気にならない』って、他の人は気にするってこと！？" },
@@ -396,8 +396,8 @@ const CONST_QUESTIONS = [
   { id: "O010", character: "鬼嫁", prompt: "私が出て行ったら、あんたどうするの？",
     options: [
       { text: "追いかける。だから出て行く前に、何が嫌か教えて。直すから", rate: "MAIN", reaction: "……そこまで言うなら、話してあげる", deathReason: "追いかけるって何！？怖いのよ！" },
-      { text: "困る。君がいないと何もできないから", rate: 40, reaction: "……ほんと、何もできないものね", deathReason: "家政婦がいなくなるのが困るだけでしょ！" },
-      { text: "そんなこと考えたくないよ", rate: 10, reaction: "……考えなさいよ、少しは", deathReason: "考えたくないって、現実から逃げてるだけじゃない！" },
+      { text: "困る。本当に困る。君がいないと、俺はこの家で何ひとつできないから", rate: 40, reaction: "……ほんと、何もできないものね", deathReason: "家政婦がいなくなるのが困るだけでしょ！" },
+      { text: "そんなこと、考えたくもないよ。君がいない生活なんて想像できない", rate: 10, reaction: "……考えなさいよ、少しは", deathReason: "考えたくないって、現実から逃げてるだけじゃない！" },
       { text: "実家に帰るの？駅まで送ろうか？", rate: 0, deathReason: "送るな！！引き止めなさいよ！！" } ] },
 ];
 </script>
@@ -726,7 +726,6 @@ const CONFIG = {
     entry: { game: "entry.2056875219", kind: "entry.1340021649", message: "entry.1317669719", contact: "entry.2028433641", env: "entry.875830690" },
   },
   SHARE_URL: "https://red-freegames.github.io/hisu-kaihi-game/",          // 公開URL（ポストに載るURL）
-  HASHTAGS: "#ヒス回避ゲーム #対ヒス訓練 #クソゲー",
   TAME_MS: 700,                               // 選択後に相手が黙り込む「タメ」の長さ
   REACT_MS: 550,                              // 生存時、許しのセリフを見せる長さ
   BOOM_MS: 380,                               // 死亡時、キレ顔＋爆発を見せてからリザルトへ
@@ -760,8 +759,13 @@ const VERDICT = {
   10:   { tag: "危険",     note: "⚠ かなり危ない橋を渡っていた。" },
   0:    { tag: "絶対NG",   note: "⚠ これは次から絶対に選んではいけない地雷！" },
 };
+// EASY（運要素なし）でハズレを選んだ時の説明。運や機嫌のせいにしない
+const VERDICT_EASY = {
+  40: "🤔 惜しい。でも誠意が一歩足りなかった。",
+  10: "⚠ 誠意より言い訳が勝っていた。",
+};
 const COMMON_MOODS = ["低気圧で頭痛", "血圧が秒単位で乱高下中", "空腹", "寝不足", "なぜか今日は機嫌がいい（危険）", "さっきまで笑っていた（危険）"];
-const LS = { best: "hisu_best_v1", zukan: "hisu_zukan_v1", stats: "hisu_stats_v1" };
+const LS = { best: "hisu_best_v1", zukan: "hisu_zukan_v1", stats: "hisu_stats_v1", reveal: "hisu_reveal_pending_v1" };
 
 /* =====================================================================
  *  ユーティリティ
@@ -850,6 +854,7 @@ function renderTitle() {
   $("zkTitle").textContent = `${zukanItems(null).length} / ${visibleQs().length * 4} 解除`;
   document.body.classList.remove("hell");
   show("title");
+  if (revealPending()) later(400, openReveal);         // 伝説達成直後に画面を離れて見逃した「新たな試練」を出し直す
 }
 
 // 悪魔化グラフィック・ダークUIを使う状態か（HARDの隠しEXステージ中、または demon モード＝鬼モード）
@@ -986,7 +991,7 @@ function finish(clear, legend) {
   S.resultAt = Date.now();
   show("result");
   if (legend) celebrate();
-  if (S.last.firstLegend) later(1600, openReveal);    // 紙吹雪のあとに「新たな試練」を公開
+  if (S.last.firstLegend) { save(LS.reveal, 1); later(1600, openReveal); }   // 紙吹雪のあとに公開。見逃したらタイトルで出す
   if (clear && m.demon) celebrate(["👹", "🔥", "⚡", "👑", "💀", "✨", "🏆"], "oniflash");
 }
 
@@ -994,7 +999,9 @@ function finish(clear, legend) {
 function openReveal() {
   $("revealFace").innerHTML = faceSVG(MODES.ONI.char, "angry", true);
   openModal("revealModal");
+  save(LS.reveal, 0);                                  // 一度見せたら出さない
 }
+const revealPending = () => load(LS.reveal, 0) === 1 && isUnlocked("ONI");
 function shareReveal() {
   const text = `【ヒス回避ゲーム】理不尽ヒス10問を完全制覇したら……\n` +
     `封印されていた「新たな試練」が出現した👹⚡\n` +
@@ -1061,7 +1068,7 @@ function renderResult(isBest) {
     $("boom").innerHTML = `<h2>${escape ? "【絶対NG！】<br>うやむやに逃げた！" : ng ? "【絶対NG！】<br>ありえない選択肢！" : main ? "💥 正解なのに爆死！" : "💥 爆死！"}</h2>
       <div class="face">${faceSVG(char, "angry", L.demon)}</div>
       <div class="roar">「${esc(L.reason)}」</div>
-      <div class="prob">${VERDICT[L.o.rate].note}</div>`;
+      <div class="prob">${(S.mode === "EASY" && VERDICT_EASY[L.o.rate]) || VERDICT[L.o.rate].note}</div>`;
   }
   const best = load(LS.best, {});
   $("recNow").textContent = L.legend ? "完全制覇" : `${L.reached}問目`;
@@ -1139,6 +1146,13 @@ function deathTitle(L) {
   if (L.reached === 1) return "開幕即死の伝説";
   return { MAIN: "正解したのに怒られた人", 40: "あと一歩で許された人", 10: "危ない橋を渡りきれなかった人", 0: "地雷を踏み抜く者" }[L.o.rate];
 }
+// 負けポストの締めの一言：本当に理不尽だった時だけ「理不尽」と言う（自業自得の負けは自虐に）
+function deathPunch(L) {
+  if (L.o.rate === "MAIN") return "さすがに理不尽すぎて草。";           // 正解を選んだのにキレられた
+  if (L.reason === ESCAPE_NG || L.o.rate === 0) return "どう考えても自業自得で草。";
+  if (S.mode === "EASY") return "誠意が足りなかった自覚はある。";         // EASYは運要素なし＝完全に自分のせい
+  return "ワンチャンに賭けた結果がこれだよ。";
+}
 // クリアした時の称号
 const CLEAR_TITLES = { EASY: "クレーマー撃退", NORMAL: "彼女の機嫌マスター", HARD: "母の壁を越えし者" };
 function clearTitle(L) {
@@ -1155,7 +1169,8 @@ function share() {
       const title = clearTitle(L);
       if (L.oni || L.legend || S.mode === "HARD") {
         const stage = L.oni ? m.label : L.legend ? `${m.label}＋隠しEXステージ${CONFIG.EX_GOAL}問` : m.label;
-        return `生存率数%の地獄をくぐり抜けて【${stage}】を完全クリア！！\n` +
+        const odds = L.oni ? "生存率約5%" : L.legend ? "生存率約3.6%" : "生存率1割";   // 全問正解した時の実際のクリア率
+        return `${odds}の地獄をくぐり抜けて【${stage}】を完全クリア！！\n` +
           `称号【${title}】を獲得した！全人類これ回避できる？？\n\n#ヒス回避ゲーム #神回避\n${url}`;
       }
       return `【${m.label}】を完全クリア！\n称号【${title}】を獲得。次はもっと理不尽なやつが来るらしい……\n\n#ヒス回避ゲーム #神回避\n${url}`;
@@ -1163,7 +1178,7 @@ function share() {
     const where = L.endless ? "隠しEX・" : m.demon ? "鬼モード・" : `${m.label}・`;
     return `【敗因：${where}${L.reached}問目】\n` +
       `『${choice}』って答えたら、『${reason}』ってキレられて爆死したんだがwwww\n` +
-      `【${deathTitle(L)}】獲得。さすがに理不尽すぎて草。\n\n#ヒス回避ゲーム #理不尽ゲー\n${url}`;
+      `【${deathTitle(L)}】獲得。${deathPunch(L)}\n\n#ヒス回避ゲーム #理不尽ゲー\n${url}`;
   };
   // Xの文字数上限（全角2・URLは23換算で280）に収まるよう末尾を詰める。
   // オチになるキレ理由はできるだけ残したいので、先に自分の回答を詰め、それでも長ければキレ理由を詰める
