@@ -560,6 +560,14 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
 .boom.onic h2{font-size:30px;margin-top:8px;color:#ffde00;text-shadow:0 0 12px #e8262b}
 .goldbadge.oni{background:linear-gradient(#3a0a0e,#000);color:#ffde00;border-color:#ffde00;box-shadow:0 0 0 4px #e8262b,0 0 22px rgba(255,222,0,.6)}
 .oniflash{animation:of 1.1s}
+.panel.reveal{max-width:380px;text-align:center;background:linear-gradient(170deg,#000 0%,#2c0508 55%,#5a0a0e 100%);color:#ffe9e4;border-color:#ffde00;box-shadow:0 0 0 4px #e8262b,0 0 40px rgba(232,38,43,.8);animation:rvin .5s ease-out}
+.rv-warn{color:#ffde00;font-weight:900;letter-spacing:.3em;font-size:13px;animation:lamp .9s steps(2) infinite}
+.panel.reveal h2{font-size:28px;font-weight:900;line-height:1.25;color:#fff;text-shadow:0 0 14px #e8262b}
+.rv-face{width:120px;height:120px;margin:0 auto;background:#1a0508;border-color:#ff1a1a;animation:pulse 1.4s ease-in-out infinite}
+.rv-name{font-size:14px;color:#ffde00}.rv-name b{font-size:22px;color:#fff}
+.rv-text{font-size:13px;color:#d79a8f;font-weight:700}
+.panel.reveal .big.sub{background:#2a1a14;color:#ffe9e4;border-color:#5a1c20}
+@keyframes rvin{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:none;opacity:1}}
 @keyframes of{0%{background:#ff1a1a}35%{background:#ffde00}100%{background:var(--bg)}}
 .flash{animation:fl .35s}
 .opts.locked .opt{pointer-events:none;opacity:.4;box-shadow:0 4px 0 #2a1a14}
@@ -638,6 +646,19 @@ body.hell .opt{box-shadow:0 4px 0 #7a0000}
   </div>
 </div>
 
+<!-- ===== 新たな試練（鬼モード）の解放：10問完全制覇者にだけ初回表示 ===== -->
+<div class="modal" id="revealModal" role="dialog" aria-modal="true" aria-labelledby="revealTitle">
+  <div class="panel reveal">
+    <p class="rv-warn">⚠ WARNING ⚠</p>
+    <h2 id="revealTitle">新たな試練が<br>解き放たれた</h2>
+    <div class="face rv-face" id="revealFace"></div>
+    <p class="rv-name">👹 鬼モード<br><b>容赦なき鬼嫁</b></p>
+    <p class="rv-text">10問の理不尽を越えた者だけに開かれる、封印されし最終試練。<br>正解ですら、容赦なくキレられる。</p>
+    <button class="big gold" id="revealShare">𝕏 新たな試練の出現をポストする</button>
+    <div class="row2"><button class="big sub" data-close>あとで</button><button class="big ex" id="revealGo">👹 今すぐ挑む</button></div>
+  </div>
+</div>
+
 <!-- ===== プレイ中にHOMEを押した時の確認 ===== -->
 <div class="modal" id="homeModal" role="dialog" aria-modal="true">
   <div class="panel small">
@@ -672,8 +693,8 @@ const MODES = {
   NORMAL: { char: "彼女",       goal: 7, rates: { MAIN: 93,  40: 30, 10: 10, 0: 0 }, label: "NORMAL", cls: "n", title: "メンヘラ気味の彼女", hint: "文脈を読めば回避できる。……ただし、ごくまれに" },
   HARD:   { char: "母親",       goal: 7, rates: { MAIN: 75,  40: 40, 10: 10, 0: 0 }, label: "HARD",   cls: "h", title: "ヒステリックな母親", endless: true, hint: "正解でも4回に1回は理不尽にキレられる" },
   ONI:    { char: "鬼嫁",       goal: 7, rates: { MAIN: 65,  40: 20, 10: 5,  0: 0 }, label: "鬼モード", cls: "o", title: "容赦なき鬼嫁", demon: true,
-            hint: "1問目から悪魔化。正解でも3回に1回はキレられる", locked: "HARDクリアで解放",
-            unlocked: s => (s.clears.HARD || 0) > 0 || s.legend > 0,
+            hint: "1問目から悪魔化。正解でも3回に1回はキレられる", locked: "？？？",
+            unlocked: s => s.legend > 0,             // 隠しEXステージ込みの10問完全制覇で解放。未解放のあいだは存在ごと隠す
             lines: ["👹 鬼モード開幕。一切の容赦なし", "⚠ 正解すら疑え", "⚠ 鬼の機嫌は秒で変わる", "⚠ まだ折り返し。気を抜くな", "⚠ 呼吸音すら地雷", "⚠ あと2問。指が震える", "⚠ 最終問題。鬼神まで、あと1問"] },
 };
 const CHARS = {
@@ -776,14 +797,11 @@ function renderTitle() {
   S.run++;
   closeModals();
   const best = load(LS.best, {});
-  $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => isUnlocked(k) ? `
+  $("diffs").innerHTML = Object.entries(MODES).map(([k, m]) => !isUnlocked(k) ? "" : `
     <button class="diff${m.demon ? " oni" : ""}" data-mode="${k}">${faceSVG(m.char, false, m.demon)}
       <div><span class="lv ${m.cls}">${m.label}</span><b>${m.title}</b>
-      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しEXステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}${m.demon && oniTitle() ? `／称号『${oniTitle().name}』` : ""}</small></div></button>` : `
-    <button class="diff locked" data-mode="${k}"><span class="lockico">🔒</span>
-      <div><span class="lv ${m.cls}">${m.label}</span><b>？？？</b><small>${m.locked}</small></div></button>`).join("");
-  const z = load(LS.zukan, {});
-  $("zkTitle").textContent = `${Object.keys(z).length} / ${CONST_QUESTIONS.length * 4} 解除`;
+      <small>${m.goal}問連続クリアで訓練完了${m.endless ? "／突破で隠しEXステージ…？" : ""}<br>${m.hint}<br>自己ベスト：${best[k] ? best[k] + "問目" : "—"}${m.demon && oniTitle() ? `／称号『${oniTitle().name}』` : ""}</small></div></button>`).join("");
+  $("zkTitle").textContent = `${zukanItems(null).length} / ${visibleQs().length * 4} 解除`;
   document.body.classList.remove("hell");
   show("title");
 }
@@ -791,6 +809,10 @@ function renderTitle() {
 // 悪魔化グラフィック・ダークUIを使う状態か（HARDの隠しEXステージ中、または demon モード＝鬼モード）
 const demonOn = () => S.endless || !!(MODES[S.mode] && MODES[S.mode].demon);
 const isUnlocked = k => !MODES[k].unlocked || MODES[k].unlocked(loadStats());
+// 未解放モードのキャラ・設問・実績は、図鑑やステータスの母数にも出さない（存在ごと隠す）
+const charOpen = ch => Object.keys(MODES).some(k => MODES[k].char === ch && isUnlocked(k));
+const visibleQs = () => CONST_QUESTIONS.filter(q => charOpen(q.character));
+const visibleAch = () => ACHIEVEMENTS.filter(a => !a.secret || isUnlocked("ONI"));
 
 function start(mode) {
   if (!isUnlocked(mode)) return toast(`🔒 ${MODES[mode].locked}`);
@@ -903,10 +925,10 @@ function die(o) {
 function finish(clear, legend) {
   const m = MODES[S.mode];
   if (clear) {
-    const firstHard = S.mode === "HARD" && !legend && !(loadStats().clears.HARD > 0);
+    const firstLegend = legend && !(loadStats().legend > 0);   // 初の10問完全制覇＝「新たな試練」解放の瞬間
     S.last = { clear: true, legend: !!legend, reached: legend ? CONFIG.EX_GOAL : m.goal, endless: !!legend,
                exReady: !legend && !!m.endless,      // HARDクリア直後はEXへの挑戦ボタンを出す
-               oni: !!m.demon, firstHard };
+               oni: !!m.demon, firstLegend };
     bumpStats(s => { if (legend) s.legend++; else s.clears[S.mode] = (s.clears[S.mode] || 0) + 1; });
     if (m.demon) { S.last.title = oniTitle(); S.last.nextTitle = oniNextTitle(); S.last.newTitle = S.last.title && loadStats().clears.ONI === S.last.title.n; }
   }
@@ -918,7 +940,21 @@ function finish(clear, legend) {
   S.resultAt = Date.now();
   show("result");
   if (legend) celebrate();
+  if (S.last.firstLegend) later(1600, openReveal);    // 紙吹雪のあとに「新たな試練」を公開
   if (clear && m.demon) celebrate(["👹", "🔥", "⚡", "👑", "💀", "✨", "🏆"], "oniflash");
+}
+
+// 「新たな試練」公開モーダル（初の10問完全制覇時に自動表示）
+function openReveal() {
+  $("revealFace").innerHTML = faceSVG(MODES.ONI.char, "angry", true);
+  openModal("revealModal");
+}
+function shareReveal() {
+  const text = `【ヒス回避ゲーム】理不尽ヒス10問を完全制覇したら……\n` +
+    `封印されていた「新たな試練」が出現した👹⚡\n` +
+    `10問完全制覇者にしか見えない最終ステージ。あなたは辿り着けるか？\n` +
+    `#ヒス回避ゲーム #新たな試練 #伝説のヒス回避マスター ${CONFIG.SHARE_URL}`;
+  window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank", "noopener");
 }
 
 // 鬼モードの称号（クリア回数で昇格）。ここに足せば称号を増やせる
@@ -992,7 +1028,7 @@ function renderResult(isBest) {
       (L.nextTitle ? `<br>あと${L.nextTitle.left}回の制覇で、称号『${esc(L.nextTitle.name)}』に昇格。` : "<br>すべての鬼の称号を手にした。あなたこそ理不尽の頂点。");
   } else if (L.exReady) {
     $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！<br>🔥 隠しEXステージ：正解でもキレられる確率がさらに上がる、真の理不尽が待っている。` +
-      (L.firstHard ? "<br><b>👹 新モード「鬼モード」が解放されました！</b>" : "");
+      "";
   } else if (L.clear) {
     $("cause").innerHTML = `<div class="h">🏆 結果</div>${esc(m.title)}の訓練を完了！次はさらに理不尽な相手が待っている……`;
   } else {
@@ -1020,7 +1056,7 @@ function renderResult(isBest) {
 // 図鑑の項目一覧（ch を渡すとそのキャラだけ）。newKey は直前に踏んだ地雷（先頭に出して NEW 表示）
 function zukanItems(ch, newKey) {
   const z = load(LS.zukan, {}), items = [];
-  CONST_QUESTIONS.forEach(q => { if (!ch || q.character === ch) q.options.forEach((o, i) => { const k = q.id + ":" + i; if (z[k]) items.push({ q, o, i, k, n: z[k] }); }); });
+  visibleQs().forEach(q => { if (!ch || q.character === ch) q.options.forEach((o, i) => { const k = q.id + ":" + i; if (z[k]) items.push({ q, o, i, k, n: z[k] }); }); });
   items.sort((a, b) => (b.k === newKey) - (a.k === newKey) || rnum(a.o.rate) - rnum(b.o.rate));
   return items;
 }
@@ -1032,16 +1068,16 @@ function zukanHTML(items, newKey) {
 }
 function renderZukan(newKey) {
   const items = zukanItems(null, newKey);
-  $("zkSum").textContent = `📖 解除した地雷セリフ図鑑（${items.length} / ${CONST_QUESTIONS.length * 4}）`;
+  $("zkSum").textContent = `📖 解除した地雷セリフ図鑑（${items.length} / ${visibleQs().length * 4}）`;
   $("zkList").innerHTML = zukanHTML(items, newKey);
 }
 // タイトルから開く図鑑（キャラ別タブ）
 function openZukan(ch) {
   const all = zukanItems(null), items = ch ? zukanItems(ch) : all;
-  const tabs = [["", "全員"], ...Object.values(MODES).map(m => [m.char, m.char])];
-  $("zkModalSum").textContent = `解除：${all.length} / ${CONST_QUESTIONS.length * 4}（踏んだ地雷だけが載ります）`;
+  const tabs = [["", "全員"], ...Object.keys(MODES).filter(isUnlocked).map(k => [MODES[k].char, MODES[k].char])];
+  $("zkModalSum").textContent = `解除：${all.length} / ${visibleQs().length * 4}（踏んだ地雷だけが載ります）`;
   $("zkTabs").innerHTML = tabs.map(([v, label]) => {
-    const n = v ? zukanItems(v).length : all.length, max = (v ? POOL[v].length : CONST_QUESTIONS.length) * 4;
+    const n = v ? zukanItems(v).length : all.length, max = (v ? POOL[v].length : visibleQs().length) * 4;
     return `<button class="tab${(ch || "") === v ? " on" : ""}" data-ch="${v}">${label}<small>${n}/${max}</small></button>`;
   }).join("");
   $("zkModalList").innerHTML = zukanHTML(items, null);
@@ -1090,8 +1126,8 @@ const ACHIEVEMENTS = [
   { icon: "🔥", name: "裏ステージの扉",     desc: "HARDをクリアして隠しEXステージに挑む",  ok: (s) => s.exTries >= 1 },
   { icon: "👹", name: "地獄の底を見た",     desc: "隠しEXステージの最終問（10問目）に到達", ok: (s, b) => (b.HARD || 0) >= 10 },
   { icon: "👑", name: "伝説のヒス回避マスター", desc: "隠しEXステージまで10問完全制覇",       ok: (s) => s.legend >= 1 },
-  { icon: "🗝", name: "鬼の封印を解く",     desc: "鬼モードを解放する（HARDクリア）",        ok: (s) => (s.clears.HARD || 0) > 0 || s.legend > 0 },
-  ...ONI_TITLES.map((t, i) => ({ icon: ["👹", "⚔", "😈"][i] || "👹", name: t.name, desc: t.desc, ok: (s) => (s.clears.ONI || 0) >= t.n })),
+  { icon: "🗝", name: "鬼の封印を解く",     desc: "10問完全制覇で、新たな試練を解き放つ",   secret: true, ok: (s) => s.legend > 0 },
+  ...ONI_TITLES.map((t, i) => ({ icon: ["👹", "⚔", "😈"][i] || "👹", name: t.name, desc: t.desc, secret: true, ok: (s) => (s.clears.ONI || 0) >= t.n })),
   { icon: "🤯", name: "理不尽の洗礼",       desc: "正解を選んだのに爆死する",                 ok: (s) => s.mainDeaths >= 1 },
   { icon: "💣", name: "地雷を踏み抜いた",   desc: "絶対NGを選んで爆死する",                   ok: (s) => s.ngDeaths >= 1 },
   { icon: "🏃", name: "逃げは許されない",   desc: "「確認してまいります」で爆死する",         ok: (s) => s.escapeDeaths >= 1 },
@@ -1104,10 +1140,10 @@ const ACHIEVEMENTS = [
 
 function renderStats() {
   const s = loadStats(), b = load(LS.best, {}), z = load(LS.zukan, {});
-  const total = CONST_QUESTIONS.length * 4, zn = Object.keys(z).length, zr = Math.floor(zn / total * 100);
-  const got = ACHIEVEMENTS.filter(a => a.ok(s, b, zr)).length;
+  const total = visibleQs().length * 4, zn = zukanItems(null).length, zr = Math.floor(zn / total * 100);
+  const got = visibleAch().filter(a => a.ok(s, b, zr)).length;
   $("statsBody").innerHTML = `
-    <div class="sec"><h3>クリア状況</h3><div class="clr">${Object.entries(MODES).map(([k, m]) => {
+    <div class="sec"><h3>クリア状況</h3><div class="clr">${Object.entries(MODES).filter(([k]) => isUnlocked(k)).map(([k, m]) => {
       const cleared = (s.clears[k] || 0) > 0, open = isUnlocked(k);
       const status = !open ? "🔒 未解放" : m.endless && s.legend ? "👑 完全制覇" : m.demon && oniTitle() ? `👹 ${oniTitle().name}` : cleared ? "CLEAR!" : "未クリア";
       return `<div><span class="lv ${m.cls}">${m.label}</span><span>${open ? esc(m.title) : "？？？"}<br><small>${open ? `ベスト：${b[k] ? b[k] + "問目" : "—"}${m.endless && (b[k] || 0) > m.goal ? "（隠しEXステージ）" : ""}${m.demon ? `／制覇${s.clears[k] || 0}回` : ""}` : esc(m.locked)}</small></span>
@@ -1121,7 +1157,7 @@ function renderStats() {
       <div><b>${s.ngDeaths}</b><small>絶対NG被弾</small></div>
       <div><b>${zn}<span style="font-size:12px">/${total}</span></b><small>図鑑解除</small></div>
     </div></div>
-    <div class="sec"><h3>実績・称号（${got} / ${ACHIEVEMENTS.length}）</h3><ul class="ach">${ACHIEVEMENTS.map(a => {
+    <div class="sec"><h3>実績・称号（${got} / ${visibleAch().length}）</h3><ul class="ach">${visibleAch().map(a => {
       const ok = a.ok(s, b, zr);
       return `<li class="${ok ? "got" : ""}"><i>${ok ? a.icon : "🔒"}</i><span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small></span></li>`;
     }).join("")}</ul></div>`;
@@ -1135,6 +1171,9 @@ function openStats() { renderStats(); openModal("statsModal"); }
  *  入力
  * ===================================================================== */
 $("statsBtn").addEventListener("click", openStats);
+$("revealShare").addEventListener("click", shareReveal);
+$("revealGo").addEventListener("click", () => start("ONI"));
+$("revealModal").addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target.id === "revealModal") closeModals(); });
 $("zkBtn").addEventListener("click", () => openZukan(""));
 $("zukanModal").addEventListener("click", e => {
   const t = e.target.closest("[data-ch]");
